@@ -1,0 +1,1313 @@
+   1              	# 1 "../Firmware/RISCV/env_Eclipse/start.S"
+   1              	/*
+   0              	
+   0              	
+   0              	
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 * Copyright (c) 2025, GigaDevice Semiconductor Inc.
+   4              	 *
+   5              	 * SPDX-License-Identifier: Apache-2.0
+   6              	 *
+   7              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   8              	 * not use this file except in compliance with the License.
+   9              	 * You may obtain a copy of the License at
+  10              	 *
+  11              	 * www.apache.org/licenses/LICENSE-2.0
+  12              	 *
+  13              	 * Unless required by applicable law or agreed to in writing, software
+  14              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  15              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  16              	 * See the License for the specific language governing permissions and
+  17              	 * limitations under the License.
+  18              	 */
+  19              	
+  20              	/* This file refers the RISC-V standard, some adjustments are made according to GigaDevice chips */
+  21              	
+  22              	#include "riscv_encoding.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_ENCODING_H__
+  19              	#define __RISCV_ENCODING_H__
+  20              	
+  21              	#include "riscv_bits.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_BITS_H__
+  19              	#define __RISCV_BITS_H__
+  20              	
+  21              	#ifdef __cplusplus
+  22              	 extern "C" {
+  23              	#endif
+  24              	
+  25              	#if __riscv_xlen == 64
+  26              	# define SLL32                  sllw
+  27              	# define STORE                  sd
+  28              	# define LOAD                   ld
+  29              	# define LWU                    lwu
+  30              	# define LOG_REGBYTES           3
+  31              	#else
+  32              	# define SLL32                  sll
+  33              	# define STORE                  sw
+  34              	# define LOAD                   lw
+  35              	# define LWU                    lw
+  36              	# define LOG_REGBYTES           2
+  37              	#endif /* __riscv_xlen */
+  38              	
+  39              	#define REGBYTES (1 << LOG_REGBYTES)
+  40              	
+  41              	#if defined(__riscv_flen)
+  42              	#if __riscv_flen == 64
+  43              	# define FPSTORE                fsd
+  44              	# define FPLOAD                 fld
+  45              	# define LOG_FPREGBYTES         3
+  46              	#else
+  47              	# define FPSTORE                fsw
+  48              	# define FPLOAD                 flw
+  49              	# define LOG_FPREGBYTES         2
+  50              	#endif /* __riscv_flen == 64 */
+  51              	#define FPREGBYTES              (1 << LOG_FPREGBYTES)
+  52              	#endif /* __riscv_flen */
+  53              	
+  54              	#define __rv_likely(x)          __builtin_expect((x), 1)
+  55              	#define __rv_unlikely(x)        __builtin_expect((x), 0)
+  56              	
+  57              	#define __RV_ROUNDUP(a, b)      ((((a)-1)/(b)+1)*(b))
+  58              	#define __RV_ROUNDDOWN(a, b)    ((a)/(b)*(b))
+  59              	
+  60              	#define __RV_MAX(a, b)          ((a) > (b) ? (a) : (b))
+  61              	#define __RV_MIN(a, b)          ((a) < (b) ? (a) : (b))
+  62              	#define __RV_CLAMP(a, lo, hi)   MIN(MAX(a, lo), hi)
+  63              	
+  64              	#define __RV_EXTRACT_FIELD(val, which)                  (((val) & (which)) / ((which) & ~((which)-1
+  65              	#define __RV_INSERT_FIELD(val, which, fieldval)         (((val) & ~(which)) | ((fieldval) * ((which
+  66              	
+  67              	#ifdef __ASSEMBLY__
+  68              	#define _AC(X,Y)                X
+  69              	#define _AT(T,X)                X
+  70              	#else
+  71              	#define __AC(X,Y)               (X##Y)
+  72              	#define _AC(X,Y)                __AC(X,Y)
+  73              	#define _AT(T,X)                ((T)(X))
+  74              	#endif /* __ASSEMBLY__ */
+  75              	
+  76              	#define _UL(x)                  (_AC(x, UL))
+  77              	#define _ULL(x)                 (_AC(x, ULL))
+  78              	
+  79              	#define _BITUL(x)               (_UL(1) << (x))
+  80              	#define _BITULL(x)              (_ULL(1) << (x))
+  81              	
+  82              	#define UL(x)                   (_UL(x))
+  83              	#define ULL(x)                  (_ULL(x))
+  84              	
+  85              	#define STR(x)                  XSTR(x)
+  86              	#define XSTR(x)                 #x
+  87              	#define __STR(s)                #s
+  88              	#define STRINGIFY(s)            __STR(s)
+  89              	
+  22              	#ifdef __cplusplus
+  23              	 extern "C" {
+  24              	#endif
+  25              	/**
+  26              	 * \defgroup NMSIS_Core_CSR_Encoding    Core CSR Encodings
+  27              	 * \ingroup  NMSIS_Core
+  28              	 * \brief    NMSIS Core CSR Encodings
+  29              	 * \details
+  30              	 *
+  31              	 * The following macros are used for CSR encodings
+  32              	 *   @{
+  33              	 */
+  34              	/* === Standard CSR bit mask === */
+  35              	#define MSTATUS_UIE         0x00000001
+  36              	#define MSTATUS_SIE         0x00000002
+  37              	#define MSTATUS_HIE         0x00000004
+  38              	#define MSTATUS_MIE         0x00000008
+  39              	#define MSTATUS_UPIE        0x00000010
+  40              	#define MSTATUS_SPIE        0x00000020
+  41              	#define MSTATUS_HPIE        0x00000040
+  42              	#define MSTATUS_MPIE        0x00000080
+  43              	#define MSTATUS_SPP         0x00000100
+  44              	#define MSTATUS_MPP         0x00001800
+  45              	#define MSTATUS_FS          0x00006000
+  46              	#define MSTATUS_XS          0x00018000
+  47              	#define MSTATUS_MPRV        0x00020000
+  48              	#define MSTATUS_PUM         0x00040000
+  49              	#define MSTATUS_MXR         0x00080000
+  50              	#define MSTATUS_VM          0x1F000000
+  51              	#define MSTATUS32_SD        0x80000000
+  52              	#define MSTATUS64_SD        0x8000000000000000
+  53              	
+  54              	#define MSTATUS_FS_INITIAL  0x00002000
+  55              	#define MSTATUS_FS_CLEAN    0x00004000
+  56              	#define MSTATUS_FS_DIRTY    0x00006000
+  57              	
+  58              	#define SSTATUS_UIE         0x00000001
+  59              	#define SSTATUS_SIE         0x00000002
+  60              	#define SSTATUS_UPIE        0x00000010
+  61              	#define SSTATUS_SPIE        0x00000020
+  62              	#define SSTATUS_SPP         0x00000100
+  63              	#define SSTATUS_FS          0x00006000
+  64              	#define SSTATUS_XS          0x00018000
+  65              	#define SSTATUS_PUM         0x00040000
+  66              	#define SSTATUS32_SD        0x80000000
+  67              	#define SSTATUS64_SD        0x8000000000000000
+  68              	
+  69              	#define CSR_MCACHE_CTL_IE   0x00000001
+  70              	#define CSR_MCACHE_CTL_DE   0x00010000
+  71              	
+  72              	#define DCSR_XDEBUGVER      (3U<<30)
+  73              	#define DCSR_NDRESET        (1<<29)
+  74              	#define DCSR_FULLRESET      (1<<28)
+  75              	#define DCSR_EBREAKM        (1<<15)
+  76              	#define DCSR_EBREAKH        (1<<14)
+  77              	#define DCSR_EBREAKS        (1<<13)
+  78              	#define DCSR_EBREAKU        (1<<12)
+  79              	#define DCSR_STOPCYCLE      (1<<10)
+  80              	#define DCSR_STOPTIME       (1<<9)
+  81              	#define DCSR_CAUSE          (7<<6)
+  82              	#define DCSR_DEBUGINT       (1<<5)
+  83              	#define DCSR_HALT           (1<<3)
+  84              	#define DCSR_STEP           (1<<2)
+  85              	#define DCSR_PRV            (3<<0)
+  86              	
+  87              	#define DCSR_CAUSE_NONE     0
+  88              	#define DCSR_CAUSE_SWBP     1
+  89              	#define DCSR_CAUSE_HWBP     2
+  90              	#define DCSR_CAUSE_DEBUGINT 3
+  91              	#define DCSR_CAUSE_STEP     4
+  92              	#define DCSR_CAUSE_HALT     5
+  93              	
+  94              	#define MCONTROL_TYPE(xlen)    (0xfULL<<((xlen)-4))
+  95              	#define MCONTROL_DMODE(xlen)   (1ULL<<((xlen)-5))
+  96              	#define MCONTROL_MASKMAX(xlen) (0x3fULL<<((xlen)-11))
+  97              	
+  98              	#define MCONTROL_SELECT     (1<<19)
+  99              	#define MCONTROL_TIMING     (1<<18)
+ 100              	#define MCONTROL_ACTION     (0x3f<<12)
+ 101              	#define MCONTROL_CHAIN      (1<<11)
+ 102              	#define MCONTROL_MATCH      (0xf<<7)
+ 103              	#define MCONTROL_M          (1<<6)
+ 104              	#define MCONTROL_H          (1<<5)
+ 105              	#define MCONTROL_S          (1<<4)
+ 106              	#define MCONTROL_U          (1<<3)
+ 107              	#define MCONTROL_EXECUTE    (1<<2)
+ 108              	#define MCONTROL_STORE      (1<<1)
+ 109              	#define MCONTROL_LOAD       (1<<0)
+ 110              	
+ 111              	#define MCONTROL_TYPE_NONE      0
+ 112              	#define MCONTROL_TYPE_MATCH     2
+ 113              	
+ 114              	#define MCONTROL_ACTION_DEBUG_EXCEPTION   0
+ 115              	#define MCONTROL_ACTION_DEBUG_MODE        1
+ 116              	#define MCONTROL_ACTION_TRACE_START       2
+ 117              	#define MCONTROL_ACTION_TRACE_STOP        3
+ 118              	#define MCONTROL_ACTION_TRACE_EMIT        4
+ 119              	
+ 120              	#define MCONTROL_MATCH_EQUAL     0
+ 121              	#define MCONTROL_MATCH_NAPOT     1
+ 122              	#define MCONTROL_MATCH_GE        2
+ 123              	#define MCONTROL_MATCH_LT        3
+ 124              	#define MCONTROL_MATCH_MASK_LOW  4
+ 125              	#define MCONTROL_MATCH_MASK_HIGH 5
+ 126              	
+ 127              	#define MIP_SSIP            (1 << IRQ_S_SOFT)
+ 128              	#define MIP_HSIP            (1 << IRQ_H_SOFT)
+ 129              	#define MIP_MSIP            (1 << IRQ_M_SOFT)
+ 130              	#define MIP_STIP            (1 << IRQ_S_TIMER)
+ 131              	#define MIP_HTIP            (1 << IRQ_H_TIMER)
+ 132              	#define MIP_MTIP            (1 << IRQ_M_TIMER)
+ 133              	#define MIP_SEIP            (1 << IRQ_S_EXT)
+ 134              	#define MIP_HEIP            (1 << IRQ_H_EXT)
+ 135              	#define MIP_MEIP            (1 << IRQ_M_EXT)
+ 136              	
+ 137              	#define MIE_SSIE            MIP_SSIP
+ 138              	#define MIE_HSIE            MIP_HSIP
+ 139              	#define MIE_MSIE            MIP_MSIP
+ 140              	#define MIE_STIE            MIP_STIP
+ 141              	#define MIE_HTIE            MIP_HTIP
+ 142              	#define MIE_MTIE            MIP_MTIP
+ 143              	#define MIE_SEIE            MIP_SEIP
+ 144              	#define MIE_HEIE            MIP_HEIP
+ 145              	#define MIE_MEIE            MIP_MEIP
+ 146              	
+ 147              	/* === P-ext CSR bit mask === */
+ 148              	
+ 149              	#define UCODE_OV            (0x1)
+ 150              	
+ 151              	/* === Nuclei custom CSR bit mask === */
+ 152              	
+ 153              	#define WFE_WFE                     (0x1)
+ 154              	#define TXEVT_TXEVT                 (0x1)
+ 155              	#define SLEEPVALUE_SLEEPVALUE       (0x1)
+ 156              	
+ 157              	#define MCOUNTINHIBIT_IR            (1<<2)
+ 158              	#define MCOUNTINHIBIT_CY            (1<<0)
+ 159              	
+ 160              	#define MILM_CTL_ILM_BPA            (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 161              	#define MILM_CTL_ILM_RWECC          (1<<3)
+ 162              	#define MILM_CTL_ILM_ECC_EXCP_EN    (1<<2)
+ 163              	#define MILM_CTL_ILM_ECC_EN         (1<<1)
+ 164              	#define MILM_CTL_ILM_EN             (1<<0)
+ 165              	
+ 166              	#define MDLM_CTL_DLM_BPA            (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 167              	#define MDLM_CTL_DLM_RWECC          (1<<3)
+ 168              	#define MDLM_CTL_DLM_ECC_EXCP_EN    (1<<2)
+ 169              	#define MDLM_CTL_DLM_ECC_EN         (1<<1)
+ 170              	#define MDLM_CTL_DLM_EN             (1<<0)
+ 171              	
+ 172              	#define MSUBM_PTYP                  (0x3<<8)
+ 173              	#define MSUBM_TYP                   (0x3<<6)
+ 174              	
+ 175              	#define MDCAUSE_MDCAUSE             (0x3)
+ 176              	
+ 177              	#define MMISC_CTL_NMI_CAUSE_FFF     (1<<9)
+ 178              	#define MMISC_CTL_MISALIGN          (1<<6)
+ 179              	#define MMISC_CTL_BPU               (1<<3)
+ 180              	
+ 181              	#define MCACHE_CTL_IC_EN            (1<<0)
+ 182              	#define MCACHE_CTL_IC_SCPD_MOD      (1<<1)
+ 183              	#define MCACHE_CTL_IC_ECC_EN        (1<<2)
+ 184              	#define MCACHE_CTL_IC_ECC_EXCP_EN   (1<<3)
+ 185              	#define MCACHE_CTL_IC_RWTECC        (1<<4)
+ 186              	#define MCACHE_CTL_IC_RWDECC        (1<<5)
+ 187              	#define MCACHE_CTL_DC_EN            (1<<16)
+ 188              	#define MCACHE_CTL_DC_ECC_EN        (1<<17)
+ 189              	#define MCACHE_CTL_DC_ECC_EXCP_EN   (1<<18)
+ 190              	#define MCACHE_CTL_DC_RWTECC        (1<<19)
+ 191              	#define MCACHE_CTL_DC_RWDECC        (1<<20)
+ 192              	
+ 193              	#define MTVT2_MTVT2EN               (1<<0)
+ 194              	#define MTVT2_COMMON_CODE_ENTRY     (((1ULL<<((__riscv_xlen)-2))-1)<<2)
+ 195              	
+ 196              	#define MCFG_INFO_TEE               (1<<0)
+ 197              	#define MCFG_INFO_ECC               (1<<1)
+ 198              	#define MCFG_INFO_CLIC              (1<<2)
+ 199              	#define MCFG_INFO_PLIC              (1<<3)
+ 200              	#define MCFG_INFO_FIO               (1<<4)
+ 201              	#define MCFG_INFO_PPI               (1<<5)
+ 202              	#define MCFG_INFO_NICE              (1<<6)
+ 203              	#define MCFG_INFO_ILM               (1<<7)
+ 204              	#define MCFG_INFO_DLM               (1<<8)
+ 205              	#define MCFG_INFO_ICACHE            (1<<9)
+ 206              	#define MCFG_INFO_DCACHE            (1<<10)
+ 207              	
+ 208              	#define MICFG_IC_SET                (0xF<<0)
+ 209              	#define MICFG_IC_WAY                (0x7<<4)
+ 210              	#define MICFG_IC_LSIZE              (0x7<<7)
+ 211              	#define MICFG_IC_ECC                (0x1<<10)
+ 212              	#define MICFG_ILM_SIZE              (0x1F<<16)
+ 213              	#define MICFG_ILM_XONLY             (0x1<<21)
+ 214              	#define MICFG_ILM_ECC               (0x1<<22)
+ 215              	
+ 216              	#define MDCFG_DC_SET                (0xF<<0)
+ 217              	#define MDCFG_DC_WAY                (0x7<<4)
+ 218              	#define MDCFG_DC_LSIZE              (0x7<<7)
+ 219              	#define MDCFG_DC_ECC                (0x1<<10)
+ 220              	#define MDCFG_DLM_SIZE              (0x1F<<16)
+ 221              	#define MDCFG_DLM_ECC               (0x1<<21)
+ 222              	
+ 223              	#define MPPICFG_INFO_PPI_SIZE       (0x1F<<1)
+ 224              	#define MPPICFG_INFO_PPI_BPA        (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 225              	
+ 226              	#define MFIOCFG_INFO_FIO_SIZE       (0x1F<<1)
+ 227              	#define MFIOCFG_INFO_FIO_BPA        (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 228              	
+ 229              	#define MECC_LOCK_ECC_LOCK          (0x1)
+ 230              	
+ 231              	#define MECC_CODE_CODE              (0x1FF)
+ 232              	#define MECC_CODE_RAMID             (0x1F<<16)
+ 233              	#define MECC_CODE_SRAMID            (0x1F<<24)
+ 234              	
+ 235              	#define CCM_SUEN_SUEN               (0x1<<0)
+ 236              	#define CCM_DATA_DATA               (0x7<<0)
+ 237              	#define CCM_COMMAND_COMMAND         (0x1F<<0)
+ 238              	
+ 239              	#define SIP_SSIP MIP_SSIP
+ 240              	#define SIP_STIP MIP_STIP
+ 241              	
+ 242              	#define PRV_U 0
+ 243              	#define PRV_S 1
+ 244              	#define PRV_H 2
+ 245              	#define PRV_M 3
+ 246              	
+ 247              	#define VM_MBARE 0
+ 248              	#define VM_MBB   1
+ 249              	#define VM_MBBID 2
+ 250              	#define VM_SV32  8
+ 251              	#define VM_SV39  9
+ 252              	#define VM_SV48  10
+ 253              	
+ 254              	#define IRQ_S_SOFT   1
+ 255              	#define IRQ_H_SOFT   2
+ 256              	#define IRQ_M_SOFT   3
+ 257              	#define IRQ_S_TIMER  5
+ 258              	#define IRQ_H_TIMER  6
+ 259              	#define IRQ_M_TIMER  7
+ 260              	#define IRQ_S_EXT    9
+ 261              	#define IRQ_H_EXT    10
+ 262              	#define IRQ_M_EXT    11
+ 263              	#define IRQ_COP      12
+ 264              	#define IRQ_HOST     13
+ 265              	
+ 266              	
+ 267              	/* === FPU FRM Rounding Mode === */
+ 268              	/** FPU Round to Nearest, ties to Even*/
+ 269              	#define FRM_RNDMODE_RNE     0x0
+ 270              	/** FPU Round Towards Zero */
+ 271              	#define FRM_RNDMODE_RTZ     0x1
+ 272              	/** FPU Round Down (towards -inf) */
+ 273              	#define FRM_RNDMODE_RDN     0x2
+ 274              	/** FPU Round Up (towards +inf) */
+ 275              	#define FRM_RNDMODE_RUP     0x3
+ 276              	/** FPU Round to nearest, ties to Max Magnitude */
+ 277              	#define FRM_RNDMODE_RMM     0x4
+ 278              	/**
+ 279              	 * In instruction's rm, selects dynamic rounding mode.
+ 280              	 * In Rounding Mode register, Invalid */
+ 281              	#define FRM_RNDMODE_DYN     0x7
+ 282              	
+ 283              	/* === FPU FFLAGS Accrued Exceptions === */
+ 284              	/** FPU Inexact */
+ 285              	#define FFLAGS_AE_NX        (1<<0)
+ 286              	/** FPU Underflow */
+ 287              	#define FFLAGS_AE_UF        (1<<1)
+ 288              	/** FPU Overflow */
+ 289              	#define FFLAGS_AE_OF        (1<<2)
+ 290              	/** FPU Divide by Zero */
+ 291              	#define FFLAGS_AE_DZ        (1<<3)
+ 292              	/** FPU Invalid Operation */
+ 293              	#define FFLAGS_AE_NV        (1<<4)
+ 294              	
+ 295              	/** Floating Point Register f0-f31, eg. f0 -> FREG(0) */
+ 296              	#define FREG(idx)           f##idx
+ 297              	
+ 298              	
+ 299              	/* === PMP CFG Bits === */
+ 300              	#define PMP_R                0x01
+ 301              	#define PMP_W                0x02
+ 302              	#define PMP_X                0x04
+ 303              	#define PMP_A                0x18
+ 304              	#define PMP_A_TOR            0x08
+ 305              	#define PMP_A_NA4            0x10
+ 306              	#define PMP_A_NAPOT          0x18
+ 307              	#define PMP_L                0x80
+ 308              	
+ 309              	#define PMP_SHIFT            2
+ 310              	#define PMP_COUNT            16
+ 311              	
+ 312              	// page table entry (PTE) fields
+ 313              	#define PTE_V     0x001 // Valid
+ 314              	#define PTE_R     0x002 // Read
+ 315              	#define PTE_W     0x004 // Write
+ 316              	#define PTE_X     0x008 // Execute
+ 317              	#define PTE_U     0x010 // User
+ 318              	#define PTE_G     0x020 // Global
+ 319              	#define PTE_A     0x040 // Accessed
+ 320              	#define PTE_D     0x080 // Dirty
+ 321              	#define PTE_SOFT  0x300 // Reserved for Software
+ 322              	
+ 323              	#define PTE_PPN_SHIFT 10
+ 324              	
+ 325              	#define PTE_TABLE(PTE) (((PTE) & (PTE_V | PTE_R | PTE_W | PTE_X)) == PTE_V)
+ 326              	
+ 327              	#ifdef __riscv
+ 328              	
+ 329              	#ifdef __riscv64
+ 330              	# define MSTATUS_SD MSTATUS64_SD
+ 331              	# define SSTATUS_SD SSTATUS64_SD
+ 332              	# define RISCV_PGLEVEL_BITS 9
+ 333              	#else
+ 334              	# define MSTATUS_SD MSTATUS32_SD
+ 335              	# define SSTATUS_SD SSTATUS32_SD
+ 336              	# define RISCV_PGLEVEL_BITS 10
+ 337              	#endif /* __riscv64 */
+ 338              	
+ 339              	#define RISCV_PGSHIFT 12
+ 340              	#define RISCV_PGSIZE (1 << RISCV_PGSHIFT)
+ 341              	
+ 342              	#endif /* __riscv */
+ 343              	
+ 344              	/**
+ 345              	 * \defgroup NMSIS_Core_CSR_Registers    Core CSR Registers
+ 346              	 * \ingroup  NMSIS_Core
+ 347              	 * \brief    NMSIS Core CSR Register Definitions
+ 348              	 * \details
+ 349              	 *
+ 350              	 * The following macros are used for CSR Register Defintions.
+ 351              	 *   @{
+ 352              	 */
+ 353              	/* === Standard RISC-V CSR Registers === */
+ 354              	#define CSR_USTATUS 0x0
+ 355              	#define CSR_FFLAGS 0x1
+ 356              	#define CSR_FRM 0x2
+ 357              	#define CSR_FCSR 0x3
+ 358              	#define CSR_CYCLE 0xc00
+ 359              	#define CSR_TIME 0xc01
+ 360              	#define CSR_INSTRET 0xc02
+ 361              	#define CSR_HPMCOUNTER3 0xc03
+ 362              	#define CSR_HPMCOUNTER4 0xc04
+ 363              	#define CSR_HPMCOUNTER5 0xc05
+ 364              	#define CSR_HPMCOUNTER6 0xc06
+ 365              	#define CSR_HPMCOUNTER7 0xc07
+ 366              	#define CSR_HPMCOUNTER8 0xc08
+ 367              	#define CSR_HPMCOUNTER9 0xc09
+ 368              	#define CSR_HPMCOUNTER10 0xc0a
+ 369              	#define CSR_HPMCOUNTER11 0xc0b
+ 370              	#define CSR_HPMCOUNTER12 0xc0c
+ 371              	#define CSR_HPMCOUNTER13 0xc0d
+ 372              	#define CSR_HPMCOUNTER14 0xc0e
+ 373              	#define CSR_HPMCOUNTER15 0xc0f
+ 374              	#define CSR_HPMCOUNTER16 0xc10
+ 375              	#define CSR_HPMCOUNTER17 0xc11
+ 376              	#define CSR_HPMCOUNTER18 0xc12
+ 377              	#define CSR_HPMCOUNTER19 0xc13
+ 378              	#define CSR_HPMCOUNTER20 0xc14
+ 379              	#define CSR_HPMCOUNTER21 0xc15
+ 380              	#define CSR_HPMCOUNTER22 0xc16
+ 381              	#define CSR_HPMCOUNTER23 0xc17
+ 382              	#define CSR_HPMCOUNTER24 0xc18
+ 383              	#define CSR_HPMCOUNTER25 0xc19
+ 384              	#define CSR_HPMCOUNTER26 0xc1a
+ 385              	#define CSR_HPMCOUNTER27 0xc1b
+ 386              	#define CSR_HPMCOUNTER28 0xc1c
+ 387              	#define CSR_HPMCOUNTER29 0xc1d
+ 388              	#define CSR_HPMCOUNTER30 0xc1e
+ 389              	#define CSR_HPMCOUNTER31 0xc1f
+ 390              	#define CSR_SSTATUS 0x100
+ 391              	#define CSR_SIE 0x104
+ 392              	#define CSR_STVEC 0x105
+ 393              	#define CSR_SSCRATCH 0x140
+ 394              	#define CSR_SEPC 0x141
+ 395              	#define CSR_SCAUSE 0x142
+ 396              	#define CSR_SBADADDR 0x143
+ 397              	#define CSR_SIP 0x144
+ 398              	#define CSR_SPTBR 0x180
+ 399              	#define CSR_MSTATUS 0x300
+ 400              	#define CSR_MISA 0x301
+ 401              	#define CSR_MEDELEG 0x302
+ 402              	#define CSR_MIDELEG 0x303
+ 403              	#define CSR_MIE 0x304
+ 404              	#define CSR_MTVEC 0x305
+ 405              	#define CSR_MCOUNTEREN 0x306
+ 406              	#define CSR_MSCRATCH 0x340
+ 407              	#define CSR_MEPC 0x341
+ 408              	#define CSR_MCAUSE 0x342
+ 409              	#define CSR_MBADADDR 0x343
+ 410              	#define CSR_MTVAL 0x343
+ 411              	#define CSR_MIP 0x344
+ 412              	#define CSR_PMPCFG0 0x3a0
+ 413              	#define CSR_PMPCFG1 0x3a1
+ 414              	#define CSR_PMPCFG2 0x3a2
+ 415              	#define CSR_PMPCFG3 0x3a3
+ 416              	#define CSR_PMPADDR0 0x3b0
+ 417              	#define CSR_PMPADDR1 0x3b1
+ 418              	#define CSR_PMPADDR2 0x3b2
+ 419              	#define CSR_PMPADDR3 0x3b3
+ 420              	#define CSR_PMPADDR4 0x3b4
+ 421              	#define CSR_PMPADDR5 0x3b5
+ 422              	#define CSR_PMPADDR6 0x3b6
+ 423              	#define CSR_PMPADDR7 0x3b7
+ 424              	#define CSR_PMPADDR8 0x3b8
+ 425              	#define CSR_PMPADDR9 0x3b9
+ 426              	#define CSR_PMPADDR10 0x3ba
+ 427              	#define CSR_PMPADDR11 0x3bb
+ 428              	#define CSR_PMPADDR12 0x3bc
+ 429              	#define CSR_PMPADDR13 0x3bd
+ 430              	#define CSR_PMPADDR14 0x3be
+ 431              	#define CSR_PMPADDR15 0x3bf
+ 432              	#define CSR_TSELECT 0x7a0
+ 433              	#define CSR_TDATA1 0x7a1
+ 434              	#define CSR_TDATA2 0x7a2
+ 435              	#define CSR_TDATA3 0x7a3
+ 436              	#define CSR_DCSR 0x7b0
+ 437              	#define CSR_DPC 0x7b1
+ 438              	#define CSR_DSCRATCH 0x7b2
+ 439              	#define CSR_MCYCLE 0xb00
+ 440              	#define CSR_MINSTRET 0xb02
+ 441              	#define CSR_MHPMCOUNTER3 0xb03
+ 442              	#define CSR_MHPMCOUNTER4 0xb04
+ 443              	#define CSR_MHPMCOUNTER5 0xb05
+ 444              	#define CSR_MHPMCOUNTER6 0xb06
+ 445              	#define CSR_MHPMCOUNTER7 0xb07
+ 446              	#define CSR_MHPMCOUNTER8 0xb08
+ 447              	#define CSR_MHPMCOUNTER9 0xb09
+ 448              	#define CSR_MHPMCOUNTER10 0xb0a
+ 449              	#define CSR_MHPMCOUNTER11 0xb0b
+ 450              	#define CSR_MHPMCOUNTER12 0xb0c
+ 451              	#define CSR_MHPMCOUNTER13 0xb0d
+ 452              	#define CSR_MHPMCOUNTER14 0xb0e
+ 453              	#define CSR_MHPMCOUNTER15 0xb0f
+ 454              	#define CSR_MHPMCOUNTER16 0xb10
+ 455              	#define CSR_MHPMCOUNTER17 0xb11
+ 456              	#define CSR_MHPMCOUNTER18 0xb12
+ 457              	#define CSR_MHPMCOUNTER19 0xb13
+ 458              	#define CSR_MHPMCOUNTER20 0xb14
+ 459              	#define CSR_MHPMCOUNTER21 0xb15
+ 460              	#define CSR_MHPMCOUNTER22 0xb16
+ 461              	#define CSR_MHPMCOUNTER23 0xb17
+ 462              	#define CSR_MHPMCOUNTER24 0xb18
+ 463              	#define CSR_MHPMCOUNTER25 0xb19
+ 464              	#define CSR_MHPMCOUNTER26 0xb1a
+ 465              	#define CSR_MHPMCOUNTER27 0xb1b
+ 466              	#define CSR_MHPMCOUNTER28 0xb1c
+ 467              	#define CSR_MHPMCOUNTER29 0xb1d
+ 468              	#define CSR_MHPMCOUNTER30 0xb1e
+ 469              	#define CSR_MHPMCOUNTER31 0xb1f
+ 470              	#define CSR_MUCOUNTEREN 0x320
+ 471              	#define CSR_MSCOUNTEREN 0x321
+ 472              	#define CSR_MHPMEVENT3 0x323
+ 473              	#define CSR_MHPMEVENT4 0x324
+ 474              	#define CSR_MHPMEVENT5 0x325
+ 475              	#define CSR_MHPMEVENT6 0x326
+ 476              	#define CSR_MHPMEVENT7 0x327
+ 477              	#define CSR_MHPMEVENT8 0x328
+ 478              	#define CSR_MHPMEVENT9 0x329
+ 479              	#define CSR_MHPMEVENT10 0x32a
+ 480              	#define CSR_MHPMEVENT11 0x32b
+ 481              	#define CSR_MHPMEVENT12 0x32c
+ 482              	#define CSR_MHPMEVENT13 0x32d
+ 483              	#define CSR_MHPMEVENT14 0x32e
+ 484              	#define CSR_MHPMEVENT15 0x32f
+ 485              	#define CSR_MHPMEVENT16 0x330
+ 486              	#define CSR_MHPMEVENT17 0x331
+ 487              	#define CSR_MHPMEVENT18 0x332
+ 488              	#define CSR_MHPMEVENT19 0x333
+ 489              	#define CSR_MHPMEVENT20 0x334
+ 490              	#define CSR_MHPMEVENT21 0x335
+ 491              	#define CSR_MHPMEVENT22 0x336
+ 492              	#define CSR_MHPMEVENT23 0x337
+ 493              	#define CSR_MHPMEVENT24 0x338
+ 494              	#define CSR_MHPMEVENT25 0x339
+ 495              	#define CSR_MHPMEVENT26 0x33a
+ 496              	#define CSR_MHPMEVENT27 0x33b
+ 497              	#define CSR_MHPMEVENT28 0x33c
+ 498              	#define CSR_MHPMEVENT29 0x33d
+ 499              	#define CSR_MHPMEVENT30 0x33e
+ 500              	#define CSR_MHPMEVENT31 0x33f
+ 501              	#define CSR_MVENDORID 0xf11
+ 502              	#define CSR_MARCHID 0xf12
+ 503              	#define CSR_MIMPID 0xf13
+ 504              	#define CSR_MHARTID 0xf14
+ 505              	#define CSR_CYCLEH 0xc80
+ 506              	#define CSR_TIMEH 0xc81
+ 507              	#define CSR_INSTRETH 0xc82
+ 508              	#define CSR_HPMCOUNTER3H 0xc83
+ 509              	#define CSR_HPMCOUNTER4H 0xc84
+ 510              	#define CSR_HPMCOUNTER5H 0xc85
+ 511              	#define CSR_HPMCOUNTER6H 0xc86
+ 512              	#define CSR_HPMCOUNTER7H 0xc87
+ 513              	#define CSR_HPMCOUNTER8H 0xc88
+ 514              	#define CSR_HPMCOUNTER9H 0xc89
+ 515              	#define CSR_HPMCOUNTER10H 0xc8a
+ 516              	#define CSR_HPMCOUNTER11H 0xc8b
+ 517              	#define CSR_HPMCOUNTER12H 0xc8c
+ 518              	#define CSR_HPMCOUNTER13H 0xc8d
+ 519              	#define CSR_HPMCOUNTER14H 0xc8e
+ 520              	#define CSR_HPMCOUNTER15H 0xc8f
+ 521              	#define CSR_HPMCOUNTER16H 0xc90
+ 522              	#define CSR_HPMCOUNTER17H 0xc91
+ 523              	#define CSR_HPMCOUNTER18H 0xc92
+ 524              	#define CSR_HPMCOUNTER19H 0xc93
+ 525              	#define CSR_HPMCOUNTER20H 0xc94
+ 526              	#define CSR_HPMCOUNTER21H 0xc95
+ 527              	#define CSR_HPMCOUNTER22H 0xc96
+ 528              	#define CSR_HPMCOUNTER23H 0xc97
+ 529              	#define CSR_HPMCOUNTER24H 0xc98
+ 530              	#define CSR_HPMCOUNTER25H 0xc99
+ 531              	#define CSR_HPMCOUNTER26H 0xc9a
+ 532              	#define CSR_HPMCOUNTER27H 0xc9b
+ 533              	#define CSR_HPMCOUNTER28H 0xc9c
+ 534              	#define CSR_HPMCOUNTER29H 0xc9d
+ 535              	#define CSR_HPMCOUNTER30H 0xc9e
+ 536              	#define CSR_HPMCOUNTER31H 0xc9f
+ 537              	#define CSR_MCYCLEH 0xb80
+ 538              	#define CSR_MINSTRETH 0xb82
+ 539              	#define CSR_MHPMCOUNTER3H 0xb83
+ 540              	#define CSR_MHPMCOUNTER4H 0xb84
+ 541              	#define CSR_MHPMCOUNTER5H 0xb85
+ 542              	#define CSR_MHPMCOUNTER6H 0xb86
+ 543              	#define CSR_MHPMCOUNTER7H 0xb87
+ 544              	#define CSR_MHPMCOUNTER8H 0xb88
+ 545              	#define CSR_MHPMCOUNTER9H 0xb89
+ 546              	#define CSR_MHPMCOUNTER10H 0xb8a
+ 547              	#define CSR_MHPMCOUNTER11H 0xb8b
+ 548              	#define CSR_MHPMCOUNTER12H 0xb8c
+ 549              	#define CSR_MHPMCOUNTER13H 0xb8d
+ 550              	#define CSR_MHPMCOUNTER14H 0xb8e
+ 551              	#define CSR_MHPMCOUNTER15H 0xb8f
+ 552              	#define CSR_MHPMCOUNTER16H 0xb90
+ 553              	#define CSR_MHPMCOUNTER17H 0xb91
+ 554              	#define CSR_MHPMCOUNTER18H 0xb92
+ 555              	#define CSR_MHPMCOUNTER19H 0xb93
+ 556              	#define CSR_MHPMCOUNTER20H 0xb94
+ 557              	#define CSR_MHPMCOUNTER21H 0xb95
+ 558              	#define CSR_MHPMCOUNTER22H 0xb96
+ 559              	#define CSR_MHPMCOUNTER23H 0xb97
+ 560              	#define CSR_MHPMCOUNTER24H 0xb98
+ 561              	#define CSR_MHPMCOUNTER25H 0xb99
+ 562              	#define CSR_MHPMCOUNTER26H 0xb9a
+ 563              	#define CSR_MHPMCOUNTER27H 0xb9b
+ 564              	#define CSR_MHPMCOUNTER28H 0xb9c
+ 565              	#define CSR_MHPMCOUNTER29H 0xb9d
+ 566              	#define CSR_MHPMCOUNTER30H 0xb9e
+ 567              	#define CSR_MHPMCOUNTER31H 0xb9f
+ 568              	
+ 569              	/* === TEE CSR Registers === */
+ 570              	#define CSR_SPMPCFG0            0x1A0
+ 571              	#define CSR_SPMPCFG1            0x1A1
+ 572              	#define CSR_SPMPCFG2            0x1A2
+ 573              	#define CSR_SPMPCFG3            0x1A3
+ 574              	#define CSR_SPMPADDR0           0x1B0
+ 575              	#define CSR_SPMPADDR1           0x1B1
+ 576              	#define CSR_SPMPADDR2           0x1B2
+ 577              	#define CSR_SPMPADDR3           0x1B3
+ 578              	#define CSR_SPMPADDR4           0x1B4
+ 579              	#define CSR_SPMPADDR5           0x1B5
+ 580              	#define CSR_SPMPADDR6           0x1B6
+ 581              	#define CSR_SPMPADDR7           0x1B7
+ 582              	#define CSR_SPMPADDR8           0x1B8
+ 583              	#define CSR_SPMPADDR9           0x1B9
+ 584              	#define CSR_SPMPADDR10          0x1BA
+ 585              	#define CSR_SPMPADDR11          0x1BB
+ 586              	#define CSR_SPMPADDR12          0x1BC
+ 587              	#define CSR_SPMPADDR13          0x1BD
+ 588              	#define CSR_SPMPADDR14          0x1BE
+ 589              	#define CSR_SPMPADDR15          0x1BF
+ 590              	
+ 591              	#define CSR_JALSNXTI            0x947
+ 592              	#define CSR_STVT2               0x948
+ 593              	#define CSR_PUSHSCAUSE          0x949
+ 594              	#define CSR_PUSHSEPC            0x94A
+ 595              	
+ 596              	
+ 597              	/* === CLIC CSR Registers === */
+ 598              	#define CSR_MTVT                0x307
+ 599              	#define CSR_MNXTI               0x345
+ 600              	#define CSR_MINTSTATUS          0x346
+ 601              	#define CSR_MSCRATCHCSW         0x348
+ 602              	#define CSR_MSCRATCHCSWL        0x349
+ 603              	#define CSR_MCLICBASE           0x350
+ 604              	
+ 605              	/* === P-Extension Registers === */
+ 606              	#define CSR_UCODE               0x801
+ 607              	
+ 608              	/* === Nuclei custom CSR Registers === */
+ 609              	#define CSR_MCOUNTINHIBIT       0x320
+ 610              	#define CSR_MILM_CTL            0x7C0
+ 611              	#define CSR_MDLM_CTL            0x7C1
+ 612              	#define CSR_MECC_CODE           0x7C2
+ 613              	#define CSR_MNVEC               0x7C3
+ 614              	#define CSR_MSUBM               0x7C4
+ 615              	#define CSR_MDCAUSE             0x7C9
+ 616              	#define CSR_MCACHE_CTL          0x7CA
+ 617              	#define CSR_MMISC_CTL           0x7D0
+ 618              	#define CSR_MSAVESTATUS         0x7D6
+ 619              	#define CSR_MSAVEEPC1           0x7D7
+ 620              	#define CSR_MSAVECAUSE1         0x7D8
+ 621              	#define CSR_MSAVEEPC2           0x7D9
+ 622              	#define CSR_MSAVECAUSE2         0x7DA
+ 623              	#define CSR_MSAVEDCAUSE1        0x7DB
+ 624              	#define CSR_MSAVEDCAUSE2        0x7DC
+ 625              	#define CSR_MTLB_CTL            0x7DD
+ 626              	#define CSR_MECC_LOCK           0x7DE
+ 627              	#define CSR_MFP16MODE           0x7E2
+ 628              	#define CSR_LSTEPFORC           0x7E9
+ 629              	#define CSR_PUSHMSUBM           0x7EB
+ 630              	#define CSR_MTVT2               0x7EC
+ 631              	#define CSR_JALMNXTI            0x7ED
+ 632              	#define CSR_PUSHMCAUSE          0x7EE
+ 633              	#define CSR_PUSHMEPC            0x7EF
+ 634              	#define CSR_MPPICFG_INFO        0x7F0
+ 635              	#define CSR_MFIOCFG_INFO        0x7F1
+ 636              	#define CSR_MSMPCFG_INFO        0x7F7
+ 637              	#define CSR_SLEEPVALUE          0x811
+ 638              	#define CSR_TXEVT               0x812
+ 639              	#define CSR_WFE                 0x810
+ 640              	#define CSR_MICFG_INFO          0xFC0
+ 641              	#define CSR_MDCFG_INFO          0xFC1
+ 642              	#define CSR_MCFG_INFO           0xFC2
+ 643              	#define CSR_MTLBCFG_INFO        0xFC3
+ 644              	
+ 645              	/* === Nuclei CCM Registers === */
+ 646              	#define CSR_CCM_MBEGINADDR      0x7CB
+ 647              	#define CSR_CCM_MCOMMAND        0x7CC
+ 648              	#define CSR_CCM_MDATA           0x7CD
+ 649              	#define CSR_CCM_SUEN            0x7CE
+ 650              	#define CSR_CCM_SBEGINADDR      0x5CB
+ 651              	#define CSR_CCM_SCOMMAND        0x5CC
+ 652              	#define CSR_CCM_SDATA           0x5CD
+ 653              	#define CSR_CCM_UBEGINADDR      0x4CB
+ 654              	#define CSR_CCM_UCOMMAND        0x4CC
+ 655              	#define CSR_CCM_UDATA           0x4CD
+ 656              	#define CSR_CCM_FPIPE           0x4CF
+ 657              	
+ 658              	/** @} */ /** End of Doxygen Group NMSIS_Core_CSR_Registers **/
+ 659              	
+ 660              	/* Exception Code in MCAUSE CSR */
+ 661              	#define CAUSE_MISALIGNED_FETCH 0x0
+ 662              	#define CAUSE_FAULT_FETCH 0x1
+ 663              	#define CAUSE_ILLEGAL_INSTRUCTION 0x2
+ 664              	#define CAUSE_BREAKPOINT 0x3
+ 665              	#define CAUSE_MISALIGNED_LOAD 0x4
+ 666              	#define CAUSE_FAULT_LOAD 0x5
+ 667              	#define CAUSE_MISALIGNED_STORE 0x6
+ 668              	#define CAUSE_FAULT_STORE 0x7
+ 669              	#define CAUSE_USER_ECALL 0x8
+ 670              	#define CAUSE_SUPERVISOR_ECALL 0x9
+ 671              	#define CAUSE_HYPERVISOR_ECALL 0xa
+ 672              	#define CAUSE_MACHINE_ECALL 0xb
+ 673              	
+ 674              	/* Exception Subcode in MDCAUSE CSR */
+ 675              	#define DCAUSE_FAULT_FETCH_PMP      0x1
+ 676              	#define DCAUSE_FAULT_FETCH_INST     0x2
+ 677              	
+ 678              	#define DCAUSE_FAULT_LOAD_PMP       0x1
+ 679              	#define DCAUSE_FAULT_LOAD_INST      0x2
+ 680              	#define DCAUSE_FAULT_LOAD_NICE      0x3
+ 681              	
+ 682              	#define DCAUSE_FAULT_STORE_PMP      0x1
+ 683              	#define DCAUSE_FAULT_STORE_INST     0x2
+ 684              	
+ 685              	/** @} */ /** End of Doxygen Group NMSIS_Core_CSR_Encoding **/
+ 686              	
+ 687              	#ifdef __cplusplus
+ 688              	}
+ 689              	#endif
+ 690              	#ifdef __GNUC__
+ 691              	
+ 692              	#define read_fpu(reg) ({ unsigned long __tmp; \
+ 693              	  asm volatile ("fmv.x.w %0, " #reg : "=r"(__tmp)); \
+ 694              	  __tmp; })
+ 695              	
+ 696              	#define write_fpu(reg, val) ({ \
+ 697              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 698              	    asm volatile ("fmv.w.x " #reg ", %0" :: "i"(val)); \
+ 699              	  else \
+ 700              	    asm volatile ("fmv.w.x " #reg ", %0" :: "r"(val)); })
+ 701              	
+ 702              	
+ 703              	#define read_csr(reg) ({ unsigned long __tmp; \
+ 704              	  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+ 705              	  __tmp; })
+ 706              	
+ 707              	#define write_csr(reg, val) ({ \
+ 708              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 709              	    asm volatile ("csrw " #reg ", %0" :: "i"(val)); \
+ 710              	  else \
+ 711              	    asm volatile ("csrw " #reg ", %0" :: "r"(val)); })
+ 712              	
+ 713              	#define swap_csr(reg, val) ({ unsigned long __tmp; \
+ 714              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 715              	    asm volatile ("csrrw %0, " #reg ", %1" : "=r"(__tmp) : "i"(val)); \
+ 716              	  else \
+ 717              	    asm volatile ("csrrw %0, " #reg ", %1" : "=r"(__tmp) : "r"(val)); \
+ 718              	  __tmp; })
+ 719              	
+ 720              	#define set_csr(reg, bit) ({ unsigned long __tmp; \
+ 721              	  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+ 722              	    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "i"(bit)); \
+ 723              	  else \
+ 724              	    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "r"(bit)); \
+ 725              	  __tmp; })
+ 726              	
+ 727              	#define clear_csr(reg, bit) ({ unsigned long __tmp; \
+ 728              	  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+  23              	
+  24              	    .section .init
+  25              	    .weak     eclic_msip_handler                # Software interrupt
+  26              	    .weak     eclic_mtip_handler                # CPU Timer interrupt
+  27              	    .weak     WWDGT_IRQHandler                  # Window Watchdog Timer interrupt
+  28              	    .weak     LVD_IRQHandler                    # LVD through EXTI Line detect
+  29              	    .weak     TAMPER_STAMP_IRQHandler           # Tamper and TimeStamp through EXTI Line detect
+  30              	    .weak     RTC_WKUP_IRQHandler               # RTC Wakeup through EXTI Line
+  31              	    .weak     FMC_IRQHandler                    # FMC
+  32              	    .weak     RCU_IRQHandler                    # RCU
+  33              	    .weak     EXTI0_IRQHandler                  # EXTI Line 0
+  34              	    .weak     EXTI1_IRQHandler                  # EXTI Line 1
+  35              	    .weak     EXTI2_IRQHandler                  # EXTI Line 2
+  36              	    .weak     EXTI3_IRQHandler                  # EXTI Line 3
+  37              	    .weak     EXTI4_IRQHandler                  # EXTI Line 4
+  38              	    .weak     DMA_Channel0_IRQHandler           # DMA Channel0
+  39              	    .weak     DMA_Channel1_IRQHandler           # DMA Channel1
+  40              	    .weak     DMA_Channel2_IRQHandler           # DMA Channel2
+  41              	    .weak     DMA_Channel3_IRQHandler           # DMA Channel3
+  42              	    .weak     DMA_Channel4_IRQHandler           # DMA Channel4
+  43              	    .weak     DMA_Channel5_IRQHandler           # DMA Channel5
+  44              	    .weak     DMA_Channel6_IRQHandler           # DMA Channel6
+  45              	    .weak     DMA_Channel7_IRQHandler           # DMA Channel7
+  46              	    .weak     ADC_IRQHandler                    # ADC
+  47              	    .weak     EXTI5_9_IRQHandler                # EXTI5 to EXTI9
+  48              	    .weak     TIMER0_BRK_IRQHandler             # TIMER0 Break
+  49              	    .weak     TIMER0_UP_IRQHandler              # TIMER0 Update
+  50              	    .weak     TIMER0_CMT_IRQHandler             # TIMER0 Commutation
+  51              	    .weak     TIMER0_Channel_IRQHandler         # TIMER0 Channel Capture Compare
+  52              	    .weak     TIMER1_IRQHandler                 # TIMER1
+  53              	    .weak     TIMER2_IRQHandler                 # TIMER2
+  54              	    .weak     I2C0_EV_IRQHandler                # I2C0 Event
+  55              	    .weak     I2C0_ER_IRQHandler                # I2C0 Error
+  56              	    .weak     I2C1_EV_IRQHandler                # I2C1 Event
+  57              	    .weak     I2C1_ER_IRQHandler                # I2C1 Error
+  58              	    .weak     SPI_IRQHandler                    # SPI
+  59              	    .weak     USART0_IRQHandler                 # USART0
+  60              	    .weak     UART1_IRQHandler                  # UART1
+  61              	    .weak     UART2_IRQHandler                  # UART2
+  62              	    .weak     EXTI10_15_IRQHandler              # EXTI10 to EXTI15
+  63              	    .weak     RTC_Alarm_IRQHandler              # RTC Alarm
+  64              	    .weak     TIMER15_IRQHandler                # TIMER15
+  65              	    .weak     TIMER16_IRQHandler                # TIMER16
+  66              	    .weak     I2C0_WKUP_IRQHandler              # I2C0 Wakeup
+  67              	    .weak     USART0_WKUP_IRQHandler            # USART0 Wakeup
+  68              	    .weak     TIMER5_IRQHandler                 # TIMER5
+  69              	    .weak     WIFI_TRIGGER_IRQHandler           # WIFI Protocol trigger interrupt
+  70              	    .weak     WIFI_MAC_IRQHandler               # WIFI MAC interrupt
+  71              	    .weak     WIFI_TX_IRQHandler                # WIFI Tx interrupt
+  72              	    .weak     WIFI_RX_IRQHandler                # WIFI Rx interrupt
+  73              	    .weak     LA_IRQHandler                     # LA interrupt
+  74              	    .weak     WIFI_WKUP_IRQHandler              # WIFI wakeup interrupt
+  75              	    .weak     BLE_WKUP_IRQHandler               # BLE wakeup interrupt
+  76              	    .weak     PLATFORM_WAKE_IRQHandler          # Platform wake interrupt
+  77              	    .weak     ISO_BT_STAMP0_IRQHandler          # ISO Bluetooth TimeStamp interrupt0
+  78              	    .weak     ISO_BT_STAMP1_IRQHandler          # ISO Bluetooth TimeStamp interrupt1
+  79              	    .weak     ISO_BT_STAMP2_IRQHandler          # ISO Bluetooth TimeStamp interrupt2
+  80              	    .weak     ISO_BT_STAMP3_IRQHandler          # ISO Bluetooth TimeStamp interrupt3
+  81              	    .weak     ISO_BT_STAMP4_IRQHandler          # ISO Bluetooth TimeStamp interrupt4
+  82              	    .weak     ISO_BT_STAMP5_IRQHandler          # ISO Bluetooth TimeStamp interrupt5
+  83              	    .weak     ISO_BT_STAMP6_IRQHandler          # ISO Bluetooth TimeStamp interrupt6
+  84              	    .weak     ISO_BT_STAMP7_IRQHandler          # ISO Bluetooth TimeStamp interrupt7
+  85              	    .weak     PMU_IRQHandler                    # PMU
+  86              	    .weak     CAU_IRQHandler                    # CAU
+  87              	    .weak     HAU_TRNG_IRQHandler               # HAU and TRNG
+  88              	    .weak     WIFI_INT_IRQHandler               # WIFI interrupt
+  89              	    .weak     WIFI_SW_TRIG_IRQHandler           # SW triggered interrupt
+  90              	    .weak     WIFI_FINE_TIMER_TARGET_IRQHandler # Fine Timer Target interrupt
+  91              	    .weak     WIFI_STAMP_TARGET1_IRQHandler     # Timestamp Target 1 interrupt
+  92              	    .weak     WIFI_STAMP_TARGET2_IRQHandler     # Timestamp Target 2 interrupt
+  93              	    .weak     WIFI_STAMP_TARGET3_IRQHandler     # Timestamp Target 3 interrupt
+  94              	    .weak     WIFI_ENCRYPTION_ENGINE_IRQHandler # Encryption engine Interrupt
+  95              	    .weak     WIFI_SLEEP_MODE_IRQHandler        # Sleep Mode Interrupt
+  96              	    .weak     WIFI_HALF_SLOT_IRQHandler         # Half Slot interrupt
+  97              	    .weak     WIFI_FIFO_ACTIVITY_IRQHandler     # FIFO Activity interrupt
+  98              	    .weak     WIFI_ERROR_IRQHandler             # Error Interrupt
+  99              	    .weak     WIFI_FREQ_SELECT_IRQHandler       # Frequency Selection Interrupt
+ 100              	    .weak     EFUSE_IRQHandler                  # EFUSE
+ 101              	    .weak     QSPI_IRQHandler                   # QUADSPI
+ 102              	    .weak     PKCAU_IRQHandler                  # PKCAU
+ 103              	
+ 104              	vector_base:
+ 105 0000 C1AA     	    j _start                                    /* 0: Reserved, Jump to _start when reset for vecto
+ 106 0002 0100     	    .align LOG_REGBYTES                         /*    Need to align 4 byte for RV32, 8 Byte for RV6
+ 107 0004 00000000 	    .word     0
+ 108 0008 00000000 	    .word     0
+ 109 000c 00000000 	    .word     eclic_msip_handler                # Software interrupt
+ 110 0010 00000000 	    .word     0                                 # Reserved
+ 111 0014 00000000 	    .word     0
+ 112 0018 00000000 	    .word     0
+ 113 001c 00000000 	    .word     eclic_mtip_handler                # CPU Timer interrupt
+ 114 0020 00000000 	    .word     0                                 # Reserved
+ 115 0024 00000000 	    .word     0                                 # Reserved
+ 116 0028 00000000 	    .word     0                                 # Reserved
+ 117 002c 00000000 	    .word     0                                 # Reserved
+ 118 0030 00000000 	    .word     0                                 # Reserved
+ 119 0034 00000000 	    .word     0                                 # Reserved
+ 120 0038 00000000 	    .word     0                                 # Reserved
+ 121 003c 00000000 	    .word     0                                 # Reserved
+ 122 0040 00000000 	    .word     0                                 # Reserved
+ 123 0044 00000000 	    .word     0                                 # Reserved
+ 124 0048 00000000 	    .word     0                                 # Reserved
+ 125 004c 00000000 	    .word     WWDGT_IRQHandler                  # Window Watchdog Timer
+ 126 0050 00000000 	    .word     LVD_IRQHandler                    # LVD through EXTI Line detect
+ 127 0054 00000000 	    .word     TAMPER_STAMP_IRQHandler           # Tamper and TimeStamp through EXTI Line detect
+ 128 0058 00000000 	    .word     RTC_WKUP_IRQHandler               # RTC Wakeup through EXTI Line
+ 129 005c 00000000 	    .word     FMC_IRQHandler                    # FMC
+ 130 0060 00000000 	    .word     RCU_IRQHandler                    # RCU
+ 131 0064 00000000 	    .word     EXTI0_IRQHandler                  # EXTI Line 0
+ 132 0068 00000000 	    .word     EXTI1_IRQHandler                  # EXTI Line 1
+ 133 006c 00000000 	    .word     EXTI2_IRQHandler                  # EXTI Line 2
+ 134 0070 00000000 	    .word     EXTI3_IRQHandler                  # EXTI Line 3
+ 135 0074 00000000 	    .word     EXTI4_IRQHandler                  # EXTI Line 4
+ 136 0078 00000000 	    .word     DMA_Channel0_IRQHandler           # DMA Channel0
+ 137 007c 00000000 	    .word     DMA_Channel1_IRQHandler           # DMA Channel1
+ 138 0080 00000000 	    .word     DMA_Channel2_IRQHandler           # DMA Channel2
+ 139 0084 00000000 	    .word     DMA_Channel3_IRQHandler           # DMA Channel3
+ 140 0088 00000000 	    .word     DMA_Channel4_IRQHandler           # DMA Channel4
+ 141 008c 00000000 	    .word     DMA_Channel5_IRQHandler           # DMA Channel5
+ 142 0090 00000000 	    .word     DMA_Channel6_IRQHandler           # DMA Channel6
+ 143 0094 00000000 	    .word     DMA_Channel7_IRQHandler           # DMA Channel7
+ 144 0098 00000000 	    .word     ADC_IRQHandler                    # ADC
+ 145 009c 00000000 	    .word     0                                 # Reserved
+ 146 00a0 00000000 	    .word     0                                 # Reserved
+ 147 00a4 00000000 	    .word     0                                 # Reserved
+ 148 00a8 00000000 	    .word     EXTI5_9_IRQHandler                # EXTI5 to EXTI9
+ 149 00ac 00000000 	    .word     TIMER0_BRK_IRQHandler             # TIMER0 Break
+ 150 00b0 00000000 	    .word     TIMER0_UP_IRQHandler              # TIMER0 Update
+ 151 00b4 00000000 	    .word     TIMER0_CMT_IRQHandler             # TIMER0 Commutation
+ 152 00b8 00000000 	    .word     TIMER0_Channel_IRQHandler         # TIMER0 Channel Capture Compare
+ 153 00bc 00000000 	    .word     TIMER1_IRQHandler                 # TIMER1
+ 154 00c0 00000000 	    .word     TIMER2_IRQHandler                 # TIMER2
+ 155 00c4 00000000 	    .word     0                                 # Reserved
+ 156 00c8 00000000 	    .word     I2C0_EV_IRQHandler                # I2C0 Event
+ 157 00cc 00000000 	    .word     I2C0_ER_IRQHandler                # I2C0 Error
+ 158 00d0 00000000 	    .word     I2C1_EV_IRQHandler                # I2C1 Event
+ 159 00d4 00000000 	    .word     I2C1_ER_IRQHandler                # I2C1 Error
+ 160 00d8 00000000 	    .word     SPI_IRQHandler                    # SPI
+ 161 00dc 00000000 	    .word     0                                 # Reserved
+ 162 00e0 00000000 	    .word     USART0_IRQHandler                 # USART0
+ 163 00e4 00000000 	    .word     UART1_IRQHandler                  # UART1
+ 164 00e8 00000000 	    .word     UART2_IRQHandler                  # UART2
+ 165 00ec 00000000 	    .word     EXTI10_15_IRQHandler              # EXTI10 to EXTI15
+ 166 00f0 00000000 	    .word     RTC_Alarm_IRQHandler              # RTC Alarm
+ 167 00f4 00000000 	    .word     0                                 # Reserved
+ 168 00f8 00000000 	    .word     0                                 # Reserved
+ 169 00fc 00000000 	    .word     TIMER15_IRQHandler                # TIMER15
+ 170 0100 00000000 	    .word     TIMER16_IRQHandler                # TIMER16
+ 171 0104 00000000 	    .word     0                                 # Reserved
+ 172 0108 00000000 	    .word     0                                 # Reserved
+ 173 010c 00000000 	    .word     0                                 # Reserved
+ 174 0110 00000000 	    .word     0                                 # Reserved
+ 175 0114 00000000 	    .word     0                                 # Reserved
+ 176 0118 00000000 	    .word     I2C0_WKUP_IRQHandler              # I2C0 Wakeup
+ 177 011c 00000000 	    .word     USART0_WKUP_IRQHandler            # USART0 Wakeup
+ 178 0120 00000000 	    .word     0                                 # Reserved
+ 179 0124 00000000 	    .word     TIMER5_IRQHandler                 # TIMER5
+ 180 0128 00000000 	    .word     WIFI_TRIGGER_IRQHandler           # WIFI Protocol trigger
+ 181 012c 00000000 	    .word     WIFI_MAC_IRQHandler               # WIFI MAC
+ 182 0130 00000000 	    .word     WIFI_TX_IRQHandler                # WIFI Tx
+ 183 0134 00000000 	    .word     WIFI_RX_IRQHandler                # WIFI Rx
+ 184 0138 00000000 	    .word     0                                 # Reserved
+ 185 013c 00000000 	    .word     0                                 # Reserved
+ 186 0140 00000000 	    .word     0                                 # Reserved
+ 187 0144 00000000 	    .word     0                                 # Reserved
+ 188 0148 00000000 	    .word     0                                 # Reserved
+ 189 014c 00000000 	    .word     LA_IRQHandler                     # LA interrupt
+ 190 0150 00000000 	    .word     WIFI_WKUP_IRQHandler              # WIFI wakeup interrupt
+ 191 0154 00000000 	    .word     BLE_WKUP_IRQHandler               # BLE wakeup interrupt
+ 192 0158 00000000 	    .word     PLATFORM_WAKE_IRQHandler          # Platform wake
+ 193 015c 00000000 	    .word     ISO_BT_STAMP0_IRQHandler          # ISO Bluetooth TimeStamp interrupt0
+ 194 0160 00000000 	    .word     ISO_BT_STAMP1_IRQHandler          # ISO Bluetooth TimeStamp interrupt1
+ 195 0164 00000000 	    .word     ISO_BT_STAMP2_IRQHandler          # ISO Bluetooth TimeStamp interrupt2
+ 196 0168 00000000 	    .word     ISO_BT_STAMP3_IRQHandler          # ISO Bluetooth TimeStamp interrupt3
+ 197 016c 00000000 	    .word     ISO_BT_STAMP4_IRQHandler          # ISO Bluetooth TimeStamp interrupt4
+ 198 0170 00000000 	    .word     ISO_BT_STAMP5_IRQHandler          # ISO Bluetooth TimeStamp interrupt5
+ 199 0174 00000000 	    .word     ISO_BT_STAMP6_IRQHandler          # ISO Bluetooth TimeStamp interrupt6
+ 200 0178 00000000 	    .word     ISO_BT_STAMP7_IRQHandler          # ISO Bluetooth TimeStamp interrupt7
+ 201 017c 00000000 	    .word     PMU_IRQHandler                    # PMU
+ 202 0180 00000000 	    .word     0                                 # Reserved
+ 203 0184 00000000 	    .word     0                                 # Reserved
+ 204 0188 00000000 	    .word     CAU_IRQHandler                    # CAU
+ 205 018c 00000000 	    .word     HAU_TRNG_IRQHandler               # HAU and TRNG
+ 206 0190 00000000 	    .word     0                                 # Reserved
+ 207 0194 00000000 	    .word     WIFI_INT_IRQHandler               # WIFI interrupt
+ 208 0198 00000000 	    .word     WIFI_SW_TRIG_IRQHandler           # SW triggered interrupt
+ 209 019c 00000000 	    .word     WIFI_FINE_TIMER_TARGET_IRQHandler # Fine Timer Target interrupt
+ 210 01a0 00000000 	    .word     WIFI_STAMP_TARGET1_IRQHandler     # Timestamp Target 1 interrupt
+ 211 01a4 00000000 	    .word     WIFI_STAMP_TARGET2_IRQHandler     # Timestamp Target 2 interrupt
+ 212 01a8 00000000 	    .word     WIFI_STAMP_TARGET3_IRQHandler     # Timestamp Target 3 interrupt
+ 213 01ac 00000000 	    .word     WIFI_ENCRYPTION_ENGINE_IRQHandler # Encryption engine Interrupt
+ 214 01b0 00000000 	    .word     WIFI_SLEEP_MODE_IRQHandler        # Sleep Mode interrupt
+ 215 01b4 00000000 	    .word     WIFI_HALF_SLOT_IRQHandler         # Half Slot interrupt
+ 216 01b8 00000000 	    .word     WIFI_FIFO_ACTIVITY_IRQHandler     # FIFO Activity interrupt
+ 217 01bc 00000000 	    .word     WIFI_ERROR_IRQHandler             # Error interrupt
+ 218 01c0 00000000 	    .word     WIFI_FREQ_SELECT_IRQHandler       # Frequency Selection iterrupt
+ 219 01c4 00000000 	    .word     EFUSE_IRQHandler                  # EFUSE
+ 220 01c8 00000000 	    .word     QSPI_IRQHandler                   # QUADSPI
+ 221 01cc 00000000 	    .word     PKCAU_IRQHandler                  # PKCAU
+ 222              	    .globl _start
+ 224              	
+ 225              	_start:
+ 226              	
+ 227              	    /* Disable Global Interrupt */
+ 228 01d0 73700430 	    csrc CSR_MSTATUS, MSTATUS_MIE
+ 229              	    /* Initialize GP and Stack Pointer SP */
+ 230              	.option push
+ 231              	.option norelax
+ 232 01d4 97010000 	    la gp, __global_pointer$
+ 232      93810100 
+ 233              	.option pop
+ 234 01dc 17010000 	    la sp, _sp
+ 234      13010100 
+ 235              	
+ 236              	    /* Set the the NMI base to share with mtvec by setting CSR_MMISC_CTL */
+ 237 01e4 93020020 	    li t0, MMISC_CTL_NMI_CAUSE_FFF
+ 238 01e8 73A0027D 	    csrs CSR_MMISC_CTL, t0
+ 239              	    /* Intial the mtvt*/
+ 240 01ec 97020000 	    la t0, vector_base
+ 240      93820200 
+ 241 01f4 73907230 	    csrw CSR_MTVT, t0
+ 242              	
+ 243              	    /* Intial the mtvt2 and enable it*/
+ 244 01f8 97020000 	    la t0, irq_entry
+ 244      93820200 
+ 245 0200 7390C27E 	    csrw CSR_MTVT2, t0
+ 246 0204 73E0C07E 	    csrs CSR_MTVT2, 0x1
+ 247              	
+ 248              	    /* Intial the CSR MTVEC for the Trap and NMI base addr*/
+ 249 0208 97020000 	    la t0, exc_entry
+ 249      93820200 
+ 250 0210 73905230 	    csrw CSR_MTVEC, t0
+ 251              	
+ 252              	    /* Set the interrupt processing mode to ECLIC mode */
+ 253 0214 9302F003 	    li t0, 0x3f
+ 254 0218 73B05230 	    csrc CSR_MTVEC, t0
+ 255 021c 73E05130 	    csrs CSR_MTVEC, 0x3
+ 256              	    /* ===== Startup Stage 2 ===== */
+ 257              	#ifdef __riscv_flen
+ 258              	    /* Enable FPU */
+ 259              	    li t0, MSTATUS_FS
+ 260              	    csrs mstatus, t0
+ 261              	    csrw fcsr, x0
+ 262              	#endif
+ 263              	
+ 264              	    /* Enable mcycle and minstret counter */
+ 265 0220 73F00232 	    csrci CSR_MCOUNTINHIBIT, 0x5
+ 266              	
+ 267              	    /* ===== Startup Stage 3 ===== */
+ 268              	    /* Load data section */
+ 269 0224 17050000 	    la a0, _data_lma
+ 269      13050500 
+ 270 022c 97050000 	    la a1, _data
+ 270      93850500 
+ 271 0234 17060000 	    la a2, _edata
+ 271      13060600 
+ 272 023c 63FAC500 	    bgeu a1, a2, 2f
+ 273              	1:
+ 274 0240 83220500 	    lw t0, (a0)
+ 275 0244 23A05500 	    sw t0, (a1)
+ 276 0248 1105     	    addi a0, a0, 4
+ 277 024a 9105     	    addi a1, a1, 4
+ 278 024c E3EAC5FE 	    bltu a1, a2, 1b
+ 279              	2:
+ 280              	    /* Clear bss section */
+ 281 0250 17050000 	    la a0, __bss_start
+ 281      13050500 
+ 282 0258 97050000 	    la a1, _end
+ 282      93850500 
+ 283 0260 6377B500 	    bgeu a0, a1, 2f
+ 284              	1:
+ 285 0264 23200500 	    sw zero, (a0)
+ 286 0268 1105     	    addi a0, a0, 4
+ 287 026a E36DB5FE 	    bltu a0, a1, 1b
+ 288              	2:
+ 289              	
+ 290              	    /*
+ 291              	     * Call vendor defined SystemInit to
+ 292              	     * initialize the micro-controller system
+ 293              	     */
+ 294 026e 97000000 	    call SystemInit
+ 294      E7800000 
+ 295              	
+ 296              	    /* Call global constructors */
+ 297 0276 17050000 	    la a0, __libc_fini_array
+ 297      13050500 
+ 298 027e 97000000 	    call atexit
+ 298      E7800000 
+ 299              	    /* Call C/C++ constructor start up code */
+ 300 0286 97000000 	    call __libc_init_array
+ 300      E7800000 
+ 301              	
+ 302              	    /* do pre-init steps before main */
+ 303 028e 97000000 	    call _premain_init
+ 303      E7800000 
+ 304              	    /* ===== Call Main Function  ===== */
+ 305              	    /* argc = argv = 0 */
+ 306 0296 0145     	    li a0, 0
+ 307 0298 8145     	    li a1, 0
+ 308 029a 97000000 	    call main
+ 308      E7800000 
+ 309              	    /* do post-main steps after main */
+ 310 02a2 97000000 	    call _postmain_fini
+ 310      E7800000 
+ 311              	
+ 312              	1:
+ 313 02aa 01A0     	    j 1b
+DEFINED SYMBOLS
+../Firmware/RISCV/env_Eclipse/start.S:104    .init:0000000000000000 vector_base
+../Firmware/RISCV/env_Eclipse/start.S:225    .init:00000000000001d0 _start
+../Firmware/RISCV/env_Eclipse/start.S:105    .init:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:228    .init:00000000000001d0 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:232    .init:00000000000001d4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:234    .init:00000000000001dc .L0 
+../Firmware/RISCV/env_Eclipse/start.S:237    .init:00000000000001e4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:238    .init:00000000000001e8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:240    .init:00000000000001ec .L0 
+../Firmware/RISCV/env_Eclipse/start.S:241    .init:00000000000001f4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:244    .init:00000000000001f8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:245    .init:0000000000000200 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:246    .init:0000000000000204 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:249    .init:0000000000000208 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:250    .init:0000000000000210 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:253    .init:0000000000000214 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:254    .init:0000000000000218 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:255    .init:000000000000021c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:265    .init:0000000000000220 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:269    .init:0000000000000224 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:270    .init:000000000000022c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:271    .init:0000000000000234 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:272    .init:000000000000023c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:274    .init:0000000000000240 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:275    .init:0000000000000244 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:276    .init:0000000000000248 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:277    .init:000000000000024a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:278    .init:000000000000024c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:281    .init:0000000000000250 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:282    .init:0000000000000258 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:283    .init:0000000000000260 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:285    .init:0000000000000264 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:286    .init:0000000000000268 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:287    .init:000000000000026a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:294    .init:000000000000026e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:297    .init:0000000000000276 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:298    .init:000000000000027e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:300    .init:0000000000000286 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:303    .init:000000000000028e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:306    .init:0000000000000296 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:307    .init:0000000000000298 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:308    .init:000000000000029a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:310    .init:00000000000002a2 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002aa .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002ac .L0 
+                            .init:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002ac .L0 
+                       .debug_str:0000000000000000 .L0 
+                       .debug_str:0000000000000026 .L0 
+                       .debug_str:000000000000005d .L0 
+../Firmware/RISCV/env_Eclipse/start.S:232    .init:00000000000001d4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:234    .init:00000000000001dc .L0 
+../Firmware/RISCV/env_Eclipse/start.S:240    .init:00000000000001ec .L0 
+../Firmware/RISCV/env_Eclipse/start.S:244    .init:00000000000001f8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:249    .init:0000000000000208 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:269    .init:0000000000000224 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:270    .init:000000000000022c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:271    .init:0000000000000234 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:281    .init:0000000000000250 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:282    .init:0000000000000258 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:297    .init:0000000000000276 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:279    .init:0000000000000250 .L21
+../Firmware/RISCV/env_Eclipse/start.S:273    .init:0000000000000240 .L11
+../Firmware/RISCV/env_Eclipse/start.S:288    .init:000000000000026e .L22
+../Firmware/RISCV/env_Eclipse/start.S:284    .init:0000000000000264 .L12
+../Firmware/RISCV/env_Eclipse/start.S:312    .init:00000000000002aa .L13
+
+UNDEFINED SYMBOLS
+eclic_msip_handler
+eclic_mtip_handler
+WWDGT_IRQHandler
+LVD_IRQHandler
+TAMPER_STAMP_IRQHandler
+RTC_WKUP_IRQHandler
+FMC_IRQHandler
+RCU_IRQHandler
+EXTI0_IRQHandler
+EXTI1_IRQHandler
+EXTI2_IRQHandler
+EXTI3_IRQHandler
+EXTI4_IRQHandler
+DMA_Channel0_IRQHandler
+DMA_Channel1_IRQHandler
+DMA_Channel2_IRQHandler
+DMA_Channel3_IRQHandler
+DMA_Channel4_IRQHandler
+DMA_Channel5_IRQHandler
+DMA_Channel6_IRQHandler
+DMA_Channel7_IRQHandler
+ADC_IRQHandler
+EXTI5_9_IRQHandler
+TIMER0_BRK_IRQHandler
+TIMER0_UP_IRQHandler
+TIMER0_CMT_IRQHandler
+TIMER0_Channel_IRQHandler
+TIMER1_IRQHandler
+TIMER2_IRQHandler
+I2C0_EV_IRQHandler
+I2C0_ER_IRQHandler
+I2C1_EV_IRQHandler
+I2C1_ER_IRQHandler
+SPI_IRQHandler
+USART0_IRQHandler
+UART1_IRQHandler
+UART2_IRQHandler
+EXTI10_15_IRQHandler
+RTC_Alarm_IRQHandler
+TIMER15_IRQHandler
+TIMER16_IRQHandler
+I2C0_WKUP_IRQHandler
+USART0_WKUP_IRQHandler
+TIMER5_IRQHandler
+WIFI_TRIGGER_IRQHandler
+WIFI_MAC_IRQHandler
+WIFI_TX_IRQHandler
+WIFI_RX_IRQHandler
+LA_IRQHandler
+WIFI_WKUP_IRQHandler
+BLE_WKUP_IRQHandler
+PLATFORM_WAKE_IRQHandler
+ISO_BT_STAMP0_IRQHandler
+ISO_BT_STAMP1_IRQHandler
+ISO_BT_STAMP2_IRQHandler
+ISO_BT_STAMP3_IRQHandler
+ISO_BT_STAMP4_IRQHandler
+ISO_BT_STAMP5_IRQHandler
+ISO_BT_STAMP6_IRQHandler
+ISO_BT_STAMP7_IRQHandler
+PMU_IRQHandler
+CAU_IRQHandler
+HAU_TRNG_IRQHandler
+WIFI_INT_IRQHandler
+WIFI_SW_TRIG_IRQHandler
+WIFI_FINE_TIMER_TARGET_IRQHandler
+WIFI_STAMP_TARGET1_IRQHandler
+WIFI_STAMP_TARGET2_IRQHandler
+WIFI_STAMP_TARGET3_IRQHandler
+WIFI_ENCRYPTION_ENGINE_IRQHandler
+WIFI_SLEEP_MODE_IRQHandler
+WIFI_HALF_SLOT_IRQHandler
+WIFI_FIFO_ACTIVITY_IRQHandler
+WIFI_ERROR_IRQHandler
+WIFI_FREQ_SELECT_IRQHandler
+EFUSE_IRQHandler
+QSPI_IRQHandler
+PKCAU_IRQHandler
+__global_pointer$
+_sp
+irq_entry
+exc_entry
+_data_lma
+_data
+_edata
+__bss_start
+_end
+SystemInit
+__libc_fini_array
+atexit
+__libc_init_array
+_premain_init
+main
+_postmain_fini

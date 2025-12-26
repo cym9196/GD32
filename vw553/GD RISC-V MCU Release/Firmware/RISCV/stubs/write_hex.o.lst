@@ -1,0 +1,212 @@
+   1              		.file	"write_hex.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.rodata
+  10              		.align	2
+  11              	.LC0:
+  12 0000 307800   		.string	"0x"
+  13              		.section	.text.write_hex,"ax",@progbits
+  14              		.align	1
+  15              		.globl	write_hex
+  17              	write_hex:
+  18              	.LFB0:
+  19              		.file 1 "../Firmware/RISCV/stubs/write_hex.c"
+   1:../Firmware/RISCV/stubs/write_hex.c **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/write_hex.c **** 
+   3:../Firmware/RISCV/stubs/write_hex.c **** #include <stdint.h>
+   4:../Firmware/RISCV/stubs/write_hex.c **** #include <unistd.h>
+   5:../Firmware/RISCV/stubs/write_hex.c **** 
+   6:../Firmware/RISCV/stubs/write_hex.c **** void write_hex(int fd, unsigned long int hex)
+   7:../Firmware/RISCV/stubs/write_hex.c **** {
+  20              		.loc 1 7 1
+  21              		.cfi_startproc
+  22 0000 7971     		addi	sp,sp,-48
+  23              		.cfi_def_cfa_offset 48
+  24 0002 06D6     		sw	ra,44(sp)
+  25 0004 22D4     		sw	s0,40(sp)
+  26              		.cfi_offset 1, -4
+  27              		.cfi_offset 8, -8
+  28 0006 0018     		addi	s0,sp,48
+  29              		.cfi_def_cfa 8, 0
+  30 0008 232EA4FC 		sw	a0,-36(s0)
+  31 000c 232CB4FC 		sw	a1,-40(s0)
+   8:../Firmware/RISCV/stubs/write_hex.c ****   uint8_t ii;
+   9:../Firmware/RISCV/stubs/write_hex.c ****   uint8_t jj;
+  10:../Firmware/RISCV/stubs/write_hex.c ****   char towrite;
+  11:../Firmware/RISCV/stubs/write_hex.c ****   write(fd , "0x", 2);
+  32              		.loc 1 11 3
+  33 0010 0946     		li	a2,2
+  34 0012 B7070000 		lui	a5,%hi(.LC0)
+  35 0016 93850700 		addi	a1,a5,%lo(.LC0)
+  36 001a 0325C4FD 		lw	a0,-36(s0)
+  37 001e 97000000 		call	write
+  37      E7800000 
+  12:../Firmware/RISCV/stubs/write_hex.c ****   for (ii = sizeof(unsigned long int) * 2 ; ii > 0; ii--) {
+  38              		.loc 1 12 11
+  39 0026 A147     		li	a5,8
+  40 0028 A307F4FE 		sb	a5,-17(s0)
+  41              		.loc 1 12 3
+  42 002c B5A8     		j	.L2
+  43              	.L5:
+  44              	.LBB2:
+  13:../Firmware/RISCV/stubs/write_hex.c ****     jj = ii - 1;
+  45              		.loc 1 13 8
+  46 002e 8347F4FE 		lbu	a5,-17(s0)
+  47 0032 FD17     		addi	a5,a5,-1
+  48 0034 2307F4FE 		sb	a5,-18(s0)
+  14:../Firmware/RISCV/stubs/write_hex.c ****     uint8_t digit = ((hex & (0xF << (jj*4))) >> (jj*4));
+  49              		.loc 1 14 40
+  50 0038 8347E4FE 		lbu	a5,-18(s0)
+  51 003c 8A07     		slli	a5,a5,2
+  52              		.loc 1 14 34
+  53 003e 3D47     		li	a4,15
+  54 0040 B317F700 		sll	a5,a4,a5
+  55 0044 3E87     		mv	a4,a5
+  56              		.loc 1 14 27
+  57 0046 832784FD 		lw	a5,-40(s0)
+  58 004a 7D8F     		and	a4,a4,a5
+  59              		.loc 1 14 52
+  60 004c 8347E4FE 		lbu	a5,-18(s0)
+  61 0050 8A07     		slli	a5,a5,2
+  62              		.loc 1 14 46
+  63 0052 B357F700 		srl	a5,a4,a5
+  64              		.loc 1 14 13
+  65 0056 A306F4FE 		sb	a5,-19(s0)
+  15:../Firmware/RISCV/stubs/write_hex.c ****     towrite = digit < 0xA ? ('0' + digit) : ('A' +  (digit - 0xA));
+  66              		.loc 1 15 13
+  67 005a 0347D4FE 		lbu	a4,-19(s0)
+  68 005e A547     		li	a5,9
+  69 0060 63EBE700 		bgtu	a4,a5,.L3
+  70              		.loc 1 15 34 discriminator 1
+  71 0064 8347D4FE 		lbu	a5,-19(s0)
+  72 0068 93870703 		addi	a5,a5,48
+  73 006c 93F7F70F 		andi	a5,a5,0xff
+  74              		.loc 1 15 13 discriminator 1
+  75 0070 E207     		slli	a5,a5,24
+  76 0072 E187     		srai	a5,a5,24
+  77 0074 09A8     		j	.L4
+  78              	.L3:
+  79              		.loc 1 15 50 discriminator 2
+  80 0076 8347D4FE 		lbu	a5,-19(s0)
+  81 007a 93877703 		addi	a5,a5,55
+  82 007e 93F7F70F 		andi	a5,a5,0xff
+  83              		.loc 1 15 13 discriminator 2
+  84 0082 E207     		slli	a5,a5,24
+  85 0084 E187     		srai	a5,a5,24
+  86              	.L4:
+  87              		.loc 1 15 13 is_stmt 0 discriminator 4
+  88 0086 2306F4FE 		sb	a5,-20(s0)
+  16:../Firmware/RISCV/stubs/write_hex.c ****     write(fd, &towrite, 1);
+  89              		.loc 1 16 5 is_stmt 1 discriminator 4
+  90 008a 9307C4FE 		addi	a5,s0,-20
+  91 008e 0546     		li	a2,1
+  92 0090 BE85     		mv	a1,a5
+  93 0092 0325C4FD 		lw	a0,-36(s0)
+  94 0096 97000000 		call	write
+  94      E7800000 
+  95              	.LBE2:
+  12:../Firmware/RISCV/stubs/write_hex.c ****     jj = ii - 1;
+  96              		.loc 1 12 55 discriminator 4
+  97 009e 8347F4FE 		lbu	a5,-17(s0)
+  98 00a2 FD17     		addi	a5,a5,-1
+  99 00a4 A307F4FE 		sb	a5,-17(s0)
+ 100              	.L2:
+  12:../Firmware/RISCV/stubs/write_hex.c ****     jj = ii - 1;
+ 101              		.loc 1 12 3 discriminator 2
+ 102 00a8 8347F4FE 		lbu	a5,-17(s0)
+ 103 00ac C9F3     		bne	a5,zero,.L5
+  17:../Firmware/RISCV/stubs/write_hex.c ****   }
+  18:../Firmware/RISCV/stubs/write_hex.c **** }
+ 104              		.loc 1 18 1
+ 105 00ae 0100     		nop
+ 106 00b0 0100     		nop
+ 107 00b2 B250     		lw	ra,44(sp)
+ 108              		.cfi_restore 1
+ 109 00b4 2254     		lw	s0,40(sp)
+ 110              		.cfi_restore 8
+ 111              		.cfi_def_cfa 2, 48
+ 112 00b6 4561     		addi	sp,sp,48
+ 113              		.cfi_def_cfa_offset 0
+ 114 00b8 8280     		jr	ra
+ 115              		.cfi_endproc
+ 116              	.LFE0:
+ 118              		.text
+ 119              	.Letext0:
+ 120              		.file 2 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+ 121              		.file 3 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 write_hex.c
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:17     .text.write_hex:0000000000000000 write_hex
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:21     .text.write_hex:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:22     .text.write_hex:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:23     .text.write_hex:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:26     .text.write_hex:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:27     .text.write_hex:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:29     .text.write_hex:0000000000000008 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:33     .text.write_hex:0000000000000010 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:39     .text.write_hex:0000000000000026 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:42     .text.write_hex:000000000000002c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:46     .text.write_hex:000000000000002e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:50     .text.write_hex:0000000000000038 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:53     .text.write_hex:000000000000003e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:57     .text.write_hex:0000000000000046 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:60     .text.write_hex:000000000000004c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:63     .text.write_hex:0000000000000052 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:65     .text.write_hex:0000000000000056 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:67     .text.write_hex:000000000000005a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:71     .text.write_hex:0000000000000064 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:75     .text.write_hex:0000000000000070 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:80     .text.write_hex:0000000000000076 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:84     .text.write_hex:0000000000000082 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:88     .text.write_hex:0000000000000086 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:90     .text.write_hex:000000000000008a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:97     .text.write_hex:000000000000009e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:102    .text.write_hex:00000000000000a8 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:105    .text.write_hex:00000000000000ae .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:108    .text.write_hex:00000000000000b4 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:110    .text.write_hex:00000000000000b6 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:111    .text.write_hex:00000000000000b6 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:113    .text.write_hex:00000000000000b8 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:115    .text.write_hex:00000000000000ba .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:118    .text.write_hex:00000000000000ba .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:11     .rodata:0000000000000000 .LC0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:100    .text.write_hex:00000000000000a8 .L2
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:78     .text.write_hex:0000000000000076 .L3
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:86     .text.write_hex:0000000000000086 .L4
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:43     .text.write_hex:000000000000002e .L5
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:266    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:466    .debug_str:000000000000011f .LASF15
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:452    .debug_str:00000000000000b7 .LASF16
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:436    .debug_str:0000000000000023 .LASF17
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:422    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:428    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:458    .debug_str:00000000000000f7 .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:442    .debug_str:0000000000000088 .LASF9
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:448    .debug_str:00000000000000a4 .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:464    .debug_str:0000000000000115 .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:456    .debug_str:00000000000000e4 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:454    .debug_str:00000000000000db .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:438    .debug_str:000000000000005f .LASF5
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:430    .debug_str:0000000000000000 .LASF6
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:440    .debug_str:0000000000000071 .LASF7
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:432    .debug_str:000000000000000e .LASF8
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:446    .debug_str:000000000000009c .LASF10
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:450    .debug_str:00000000000000b2 .LASF11
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:462    .debug_str:0000000000000109 .LASF12
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:444    .debug_str:0000000000000092 .LASF18
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:18     .text.write_hex:0000000000000000 .LFB0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:116    .text.write_hex:00000000000000ba .LFE0
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:434    .debug_str:000000000000001b .LASF13
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:44     .text.write_hex:000000000000002e .LBB2
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:95     .text.write_hex:000000000000009e .LBE2
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:460    .debug_str:0000000000000103 .LASF14
+C:\Users\CYMR90~1\AppData\Local\Temp\cckUxPKV.s:123    .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+write

@@ -1,0 +1,519 @@
+   1              	# 1 "../Firmware/RISCV/env_Eclipse/start.S"
+   1              	/*
+   0              	
+   0              	
+   0              	
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 * Copyright (c) 2025, GigaDevice Semiconductor Inc.
+   4              	 *
+   5              	 * SPDX-License-Identifier: Apache-2.0
+   6              	 *
+   7              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   8              	 * not use this file except in compliance with the License.
+   9              	 * You may obtain a copy of the License at
+  10              	 *
+  11              	 * www.apache.org/licenses/LICENSE-2.0
+  12              	 *
+  13              	 * Unless required by applicable law or agreed to in writing, software
+  14              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  15              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  16              	 * See the License for the specific language governing permissions and
+  17              	 * limitations under the License.
+  18              	 */
+  19              	
+  20              	/* This file refers the RISC-V standard, some adjustments are made according to GigaDevice chips */
+  21              	
+  22              	#include "riscv_encoding.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_ENCODING_H__
+  19              	#define __RISCV_ENCODING_H__
+  20              	
+  21              	#include "riscv_bits.h"
+   1              	/*
+  22              	#ifdef __cplusplus
+  23              	
+  24              	    .section .init
+  25              	    .weak     eclic_msip_handler                # Software interrupt
+  26              	    .weak     eclic_mtip_handler                # CPU Timer interrupt
+  27              	    .weak     WWDGT_IRQHandler                  # Window Watchdog Timer interrupt
+  28              	    .weak     LVD_IRQHandler                    # LVD through EXTI Line detect
+  29              	    .weak     TAMPER_STAMP_IRQHandler           # Tamper and TimeStamp through EXTI Line detect
+  30              	    .weak     RTC_WKUP_IRQHandler               # RTC Wakeup through EXTI Line
+  31              	    .weak     FMC_IRQHandler                    # FMC
+  32              	    .weak     RCU_IRQHandler                    # RCU
+  33              	    .weak     EXTI0_IRQHandler                  # EXTI Line 0
+  34              	    .weak     EXTI1_IRQHandler                  # EXTI Line 1
+  35              	    .weak     EXTI2_IRQHandler                  # EXTI Line 2
+  36              	    .weak     EXTI3_IRQHandler                  # EXTI Line 3
+  37              	    .weak     EXTI4_IRQHandler                  # EXTI Line 4
+  38              	    .weak     DMA_Channel0_IRQHandler           # DMA Channel0
+  39              	    .weak     DMA_Channel1_IRQHandler           # DMA Channel1
+  40              	    .weak     DMA_Channel2_IRQHandler           # DMA Channel2
+  41              	    .weak     DMA_Channel3_IRQHandler           # DMA Channel3
+  42              	    .weak     DMA_Channel4_IRQHandler           # DMA Channel4
+  43              	    .weak     DMA_Channel5_IRQHandler           # DMA Channel5
+  44              	    .weak     DMA_Channel6_IRQHandler           # DMA Channel6
+  45              	    .weak     DMA_Channel7_IRQHandler           # DMA Channel7
+  46              	    .weak     ADC_IRQHandler                    # ADC
+  47              	    .weak     EXTI5_9_IRQHandler                # EXTI5 to EXTI9
+  48              	    .weak     TIMER0_BRK_IRQHandler             # TIMER0 Break
+  49              	    .weak     TIMER0_UP_IRQHandler              # TIMER0 Update
+  50              	    .weak     TIMER0_CMT_IRQHandler             # TIMER0 Commutation
+  51              	    .weak     TIMER0_Channel_IRQHandler         # TIMER0 Channel Capture Compare
+  52              	    .weak     TIMER1_IRQHandler                 # TIMER1
+  53              	    .weak     TIMER2_IRQHandler                 # TIMER2
+  54              	    .weak     I2C0_EV_IRQHandler                # I2C0 Event
+  55              	    .weak     I2C0_ER_IRQHandler                # I2C0 Error
+  56              	    .weak     I2C1_EV_IRQHandler                # I2C1 Event
+  57              	    .weak     I2C1_ER_IRQHandler                # I2C1 Error
+  58              	    .weak     SPI_IRQHandler                    # SPI
+  59              	    .weak     USART0_IRQHandler                 # USART0
+  60              	    .weak     UART1_IRQHandler                  # UART1
+  61              	    .weak     UART2_IRQHandler                  # UART2
+  62              	    .weak     EXTI10_15_IRQHandler              # EXTI10 to EXTI15
+  63              	    .weak     RTC_Alarm_IRQHandler              # RTC Alarm
+  64              	    .weak     TIMER15_IRQHandler                # TIMER15
+  65              	    .weak     TIMER16_IRQHandler                # TIMER16
+  66              	    .weak     I2C0_WKUP_IRQHandler              # I2C0 Wakeup
+  67              	    .weak     USART0_WKUP_IRQHandler            # USART0 Wakeup
+  68              	    .weak     TIMER5_IRQHandler                 # TIMER5
+  69              	    .weak     WIFI_TRIGGER_IRQHandler           # WIFI Protocol trigger interrupt
+  70              	    .weak     WIFI_MAC_IRQHandler               # WIFI MAC interrupt
+  71              	    .weak     WIFI_TX_IRQHandler                # WIFI Tx interrupt
+  72              	    .weak     WIFI_RX_IRQHandler                # WIFI Rx interrupt
+  73              	    .weak     LA_IRQHandler                     # LA interrupt
+  74              	    .weak     WIFI_WKUP_IRQHandler              # WIFI wakeup interrupt
+  75              	    .weak     BLE_WKUP_IRQHandler               # BLE wakeup interrupt
+  76              	    .weak     PLATFORM_WAKE_IRQHandler          # Platform wake interrupt
+  77              	    .weak     ISO_BT_STAMP0_IRQHandler          # ISO Bluetooth TimeStamp interrupt0
+  78              	    .weak     ISO_BT_STAMP1_IRQHandler          # ISO Bluetooth TimeStamp interrupt1
+  79              	    .weak     ISO_BT_STAMP2_IRQHandler          # ISO Bluetooth TimeStamp interrupt2
+  80              	    .weak     ISO_BT_STAMP3_IRQHandler          # ISO Bluetooth TimeStamp interrupt3
+  81              	    .weak     ISO_BT_STAMP4_IRQHandler          # ISO Bluetooth TimeStamp interrupt4
+  82              	    .weak     ISO_BT_STAMP5_IRQHandler          # ISO Bluetooth TimeStamp interrupt5
+  83              	    .weak     ISO_BT_STAMP6_IRQHandler          # ISO Bluetooth TimeStamp interrupt6
+  84              	    .weak     ISO_BT_STAMP7_IRQHandler          # ISO Bluetooth TimeStamp interrupt7
+  85              	    .weak     PMU_IRQHandler                    # PMU
+  86              	    .weak     CAU_IRQHandler                    # CAU
+  87              	    .weak     HAU_TRNG_IRQHandler               # HAU and TRNG
+  88              	    .weak     WIFI_INT_IRQHandler               # WIFI interrupt
+  89              	    .weak     WIFI_SW_TRIG_IRQHandler           # SW triggered interrupt
+  90              	    .weak     WIFI_FINE_TIMER_TARGET_IRQHandler # Fine Timer Target interrupt
+  91              	    .weak     WIFI_STAMP_TARGET1_IRQHandler     # Timestamp Target 1 interrupt
+  92              	    .weak     WIFI_STAMP_TARGET2_IRQHandler     # Timestamp Target 2 interrupt
+  93              	    .weak     WIFI_STAMP_TARGET3_IRQHandler     # Timestamp Target 3 interrupt
+  94              	    .weak     WIFI_ENCRYPTION_ENGINE_IRQHandler # Encryption engine Interrupt
+  95              	    .weak     WIFI_SLEEP_MODE_IRQHandler        # Sleep Mode Interrupt
+  96              	    .weak     WIFI_HALF_SLOT_IRQHandler         # Half Slot interrupt
+  97              	    .weak     WIFI_FIFO_ACTIVITY_IRQHandler     # FIFO Activity interrupt
+  98              	    .weak     WIFI_ERROR_IRQHandler             # Error Interrupt
+  99              	    .weak     WIFI_FREQ_SELECT_IRQHandler       # Frequency Selection Interrupt
+ 100              	    .weak     EFUSE_IRQHandler                  # EFUSE
+ 101              	    .weak     QSPI_IRQHandler                   # QUADSPI
+ 102              	    .weak     PKCAU_IRQHandler                  # PKCAU
+ 103              	
+ 104              	vector_base:
+ 105 0000 C1AA     	    j _start                                    /* 0: Reserved, Jump to _start when reset for vecto
+ 106 0002 0100     	    .align LOG_REGBYTES                         /*    Need to align 4 byte for RV32, 8 Byte for RV6
+ 107 0004 00000000 	    .word     0
+ 108 0008 00000000 	    .word     0
+ 109 000c 00000000 	    .word     eclic_msip_handler                # Software interrupt
+ 110 0010 00000000 	    .word     0                                 # Reserved
+ 111 0014 00000000 	    .word     0
+ 112 0018 00000000 	    .word     0
+ 113 001c 00000000 	    .word     eclic_mtip_handler                # CPU Timer interrupt
+ 114 0020 00000000 	    .word     0                                 # Reserved
+ 115 0024 00000000 	    .word     0                                 # Reserved
+ 116 0028 00000000 	    .word     0                                 # Reserved
+ 117 002c 00000000 	    .word     0                                 # Reserved
+ 118 0030 00000000 	    .word     0                                 # Reserved
+ 119 0034 00000000 	    .word     0                                 # Reserved
+ 120 0038 00000000 	    .word     0                                 # Reserved
+ 121 003c 00000000 	    .word     0                                 # Reserved
+ 122 0040 00000000 	    .word     0                                 # Reserved
+ 123 0044 00000000 	    .word     0                                 # Reserved
+ 124 0048 00000000 	    .word     0                                 # Reserved
+ 125 004c 00000000 	    .word     WWDGT_IRQHandler                  # Window Watchdog Timer
+ 126 0050 00000000 	    .word     LVD_IRQHandler                    # LVD through EXTI Line detect
+ 127 0054 00000000 	    .word     TAMPER_STAMP_IRQHandler           # Tamper and TimeStamp through EXTI Line detect
+ 128 0058 00000000 	    .word     RTC_WKUP_IRQHandler               # RTC Wakeup through EXTI Line
+ 129 005c 00000000 	    .word     FMC_IRQHandler                    # FMC
+ 130 0060 00000000 	    .word     RCU_IRQHandler                    # RCU
+ 131 0064 00000000 	    .word     EXTI0_IRQHandler                  # EXTI Line 0
+ 132 0068 00000000 	    .word     EXTI1_IRQHandler                  # EXTI Line 1
+ 133 006c 00000000 	    .word     EXTI2_IRQHandler                  # EXTI Line 2
+ 134 0070 00000000 	    .word     EXTI3_IRQHandler                  # EXTI Line 3
+ 135 0074 00000000 	    .word     EXTI4_IRQHandler                  # EXTI Line 4
+ 136 0078 00000000 	    .word     DMA_Channel0_IRQHandler           # DMA Channel0
+ 137 007c 00000000 	    .word     DMA_Channel1_IRQHandler           # DMA Channel1
+ 138 0080 00000000 	    .word     DMA_Channel2_IRQHandler           # DMA Channel2
+ 139 0084 00000000 	    .word     DMA_Channel3_IRQHandler           # DMA Channel3
+ 140 0088 00000000 	    .word     DMA_Channel4_IRQHandler           # DMA Channel4
+ 141 008c 00000000 	    .word     DMA_Channel5_IRQHandler           # DMA Channel5
+ 142 0090 00000000 	    .word     DMA_Channel6_IRQHandler           # DMA Channel6
+ 143 0094 00000000 	    .word     DMA_Channel7_IRQHandler           # DMA Channel7
+ 144 0098 00000000 	    .word     ADC_IRQHandler                    # ADC
+ 145 009c 00000000 	    .word     0                                 # Reserved
+ 146 00a0 00000000 	    .word     0                                 # Reserved
+ 147 00a4 00000000 	    .word     0                                 # Reserved
+ 148 00a8 00000000 	    .word     EXTI5_9_IRQHandler                # EXTI5 to EXTI9
+ 149 00ac 00000000 	    .word     TIMER0_BRK_IRQHandler             # TIMER0 Break
+ 150 00b0 00000000 	    .word     TIMER0_UP_IRQHandler              # TIMER0 Update
+ 151 00b4 00000000 	    .word     TIMER0_CMT_IRQHandler             # TIMER0 Commutation
+ 152 00b8 00000000 	    .word     TIMER0_Channel_IRQHandler         # TIMER0 Channel Capture Compare
+ 153 00bc 00000000 	    .word     TIMER1_IRQHandler                 # TIMER1
+ 154 00c0 00000000 	    .word     TIMER2_IRQHandler                 # TIMER2
+ 155 00c4 00000000 	    .word     0                                 # Reserved
+ 156 00c8 00000000 	    .word     I2C0_EV_IRQHandler                # I2C0 Event
+ 157 00cc 00000000 	    .word     I2C0_ER_IRQHandler                # I2C0 Error
+ 158 00d0 00000000 	    .word     I2C1_EV_IRQHandler                # I2C1 Event
+ 159 00d4 00000000 	    .word     I2C1_ER_IRQHandler                # I2C1 Error
+ 160 00d8 00000000 	    .word     SPI_IRQHandler                    # SPI
+ 161 00dc 00000000 	    .word     0                                 # Reserved
+ 162 00e0 00000000 	    .word     USART0_IRQHandler                 # USART0
+ 163 00e4 00000000 	    .word     UART1_IRQHandler                  # UART1
+ 164 00e8 00000000 	    .word     UART2_IRQHandler                  # UART2
+ 165 00ec 00000000 	    .word     EXTI10_15_IRQHandler              # EXTI10 to EXTI15
+ 166 00f0 00000000 	    .word     RTC_Alarm_IRQHandler              # RTC Alarm
+ 167 00f4 00000000 	    .word     0                                 # Reserved
+ 168 00f8 00000000 	    .word     0                                 # Reserved
+ 169 00fc 00000000 	    .word     TIMER15_IRQHandler                # TIMER15
+ 170 0100 00000000 	    .word     TIMER16_IRQHandler                # TIMER16
+ 171 0104 00000000 	    .word     0                                 # Reserved
+ 172 0108 00000000 	    .word     0                                 # Reserved
+ 173 010c 00000000 	    .word     0                                 # Reserved
+ 174 0110 00000000 	    .word     0                                 # Reserved
+ 175 0114 00000000 	    .word     0                                 # Reserved
+ 176 0118 00000000 	    .word     I2C0_WKUP_IRQHandler              # I2C0 Wakeup
+ 177 011c 00000000 	    .word     USART0_WKUP_IRQHandler            # USART0 Wakeup
+ 178 0120 00000000 	    .word     0                                 # Reserved
+ 179 0124 00000000 	    .word     TIMER5_IRQHandler                 # TIMER5
+ 180 0128 00000000 	    .word     WIFI_TRIGGER_IRQHandler           # WIFI Protocol trigger
+ 181 012c 00000000 	    .word     WIFI_MAC_IRQHandler               # WIFI MAC
+ 182 0130 00000000 	    .word     WIFI_TX_IRQHandler                # WIFI Tx
+ 183 0134 00000000 	    .word     WIFI_RX_IRQHandler                # WIFI Rx
+ 184 0138 00000000 	    .word     0                                 # Reserved
+ 185 013c 00000000 	    .word     0                                 # Reserved
+ 186 0140 00000000 	    .word     0                                 # Reserved
+ 187 0144 00000000 	    .word     0                                 # Reserved
+ 188 0148 00000000 	    .word     0                                 # Reserved
+ 189 014c 00000000 	    .word     LA_IRQHandler                     # LA interrupt
+ 190 0150 00000000 	    .word     WIFI_WKUP_IRQHandler              # WIFI wakeup interrupt
+ 191 0154 00000000 	    .word     BLE_WKUP_IRQHandler               # BLE wakeup interrupt
+ 192 0158 00000000 	    .word     PLATFORM_WAKE_IRQHandler          # Platform wake
+ 193 015c 00000000 	    .word     ISO_BT_STAMP0_IRQHandler          # ISO Bluetooth TimeStamp interrupt0
+ 194 0160 00000000 	    .word     ISO_BT_STAMP1_IRQHandler          # ISO Bluetooth TimeStamp interrupt1
+ 195 0164 00000000 	    .word     ISO_BT_STAMP2_IRQHandler          # ISO Bluetooth TimeStamp interrupt2
+ 196 0168 00000000 	    .word     ISO_BT_STAMP3_IRQHandler          # ISO Bluetooth TimeStamp interrupt3
+ 197 016c 00000000 	    .word     ISO_BT_STAMP4_IRQHandler          # ISO Bluetooth TimeStamp interrupt4
+ 198 0170 00000000 	    .word     ISO_BT_STAMP5_IRQHandler          # ISO Bluetooth TimeStamp interrupt5
+ 199 0174 00000000 	    .word     ISO_BT_STAMP6_IRQHandler          # ISO Bluetooth TimeStamp interrupt6
+ 200 0178 00000000 	    .word     ISO_BT_STAMP7_IRQHandler          # ISO Bluetooth TimeStamp interrupt7
+ 201 017c 00000000 	    .word     PMU_IRQHandler                    # PMU
+ 202 0180 00000000 	    .word     0                                 # Reserved
+ 203 0184 00000000 	    .word     0                                 # Reserved
+ 204 0188 00000000 	    .word     CAU_IRQHandler                    # CAU
+ 205 018c 00000000 	    .word     HAU_TRNG_IRQHandler               # HAU and TRNG
+ 206 0190 00000000 	    .word     0                                 # Reserved
+ 207 0194 00000000 	    .word     WIFI_INT_IRQHandler               # WIFI interrupt
+ 208 0198 00000000 	    .word     WIFI_SW_TRIG_IRQHandler           # SW triggered interrupt
+ 209 019c 00000000 	    .word     WIFI_FINE_TIMER_TARGET_IRQHandler # Fine Timer Target interrupt
+ 210 01a0 00000000 	    .word     WIFI_STAMP_TARGET1_IRQHandler     # Timestamp Target 1 interrupt
+ 211 01a4 00000000 	    .word     WIFI_STAMP_TARGET2_IRQHandler     # Timestamp Target 2 interrupt
+ 212 01a8 00000000 	    .word     WIFI_STAMP_TARGET3_IRQHandler     # Timestamp Target 3 interrupt
+ 213 01ac 00000000 	    .word     WIFI_ENCRYPTION_ENGINE_IRQHandler # Encryption engine Interrupt
+ 214 01b0 00000000 	    .word     WIFI_SLEEP_MODE_IRQHandler        # Sleep Mode interrupt
+ 215 01b4 00000000 	    .word     WIFI_HALF_SLOT_IRQHandler         # Half Slot interrupt
+ 216 01b8 00000000 	    .word     WIFI_FIFO_ACTIVITY_IRQHandler     # FIFO Activity interrupt
+ 217 01bc 00000000 	    .word     WIFI_ERROR_IRQHandler             # Error interrupt
+ 218 01c0 00000000 	    .word     WIFI_FREQ_SELECT_IRQHandler       # Frequency Selection iterrupt
+ 219 01c4 00000000 	    .word     EFUSE_IRQHandler                  # EFUSE
+ 220 01c8 00000000 	    .word     QSPI_IRQHandler                   # QUADSPI
+ 221 01cc 00000000 	    .word     PKCAU_IRQHandler                  # PKCAU
+ 222              	    .globl _start
+ 224              	
+ 225              	_start:
+ 226              	
+ 227              	    /* Disable Global Interrupt */
+ 228 01d0 73700430 	    csrc CSR_MSTATUS, MSTATUS_MIE
+ 229              	    /* Initialize GP and Stack Pointer SP */
+ 230              	.option push
+ 231              	.option norelax
+ 232 01d4 97010000 	    la gp, __global_pointer$
+ 232      93810100 
+ 233              	.option pop
+ 234 01dc 17010000 	    la sp, _sp
+ 234      13010100 
+ 235              	
+ 236              	    /* Set the the NMI base to share with mtvec by setting CSR_MMISC_CTL */
+ 237 01e4 93020020 	    li t0, MMISC_CTL_NMI_CAUSE_FFF
+ 238 01e8 73A0027D 	    csrs CSR_MMISC_CTL, t0
+ 239              	    /* Intial the mtvt*/
+ 240 01ec 97020000 	    la t0, vector_base
+ 240      93820200 
+ 241 01f4 73907230 	    csrw CSR_MTVT, t0
+ 242              	
+ 243              	    /* Intial the mtvt2 and enable it*/
+ 244 01f8 97020000 	    la t0, irq_entry
+ 244      93820200 
+ 245 0200 7390C27E 	    csrw CSR_MTVT2, t0
+ 246 0204 73E0C07E 	    csrs CSR_MTVT2, 0x1
+ 247              	
+ 248              	    /* Intial the CSR MTVEC for the Trap and NMI base addr*/
+ 249 0208 97020000 	    la t0, exc_entry
+ 249      93820200 
+ 250 0210 73905230 	    csrw CSR_MTVEC, t0
+ 251              	
+ 252              	    /* Set the interrupt processing mode to ECLIC mode */
+ 253 0214 9302F003 	    li t0, 0x3f
+ 254 0218 73B05230 	    csrc CSR_MTVEC, t0
+ 255 021c 73E05130 	    csrs CSR_MTVEC, 0x3
+ 256              	    /* ===== Startup Stage 2 ===== */
+ 257              	#ifdef __riscv_flen
+ 258              	    /* Enable FPU */
+ 259              	    li t0, MSTATUS_FS
+ 260              	    csrs mstatus, t0
+ 261              	    csrw fcsr, x0
+ 262              	#endif
+ 263              	
+ 264              	    /* Enable mcycle and minstret counter */
+ 265 0220 73F00232 	    csrci CSR_MCOUNTINHIBIT, 0x5
+ 266              	
+ 267              	    /* ===== Startup Stage 3 ===== */
+ 268              	    /* Load data section */
+ 269 0224 17050000 	    la a0, _data_lma
+ 269      13050500 
+ 270 022c 97050000 	    la a1, _data
+ 270      93850500 
+ 271 0234 17060000 	    la a2, _edata
+ 271      13060600 
+ 272 023c 63FAC500 	    bgeu a1, a2, 2f
+ 273              	1:
+ 274 0240 83220500 	    lw t0, (a0)
+ 275 0244 23A05500 	    sw t0, (a1)
+ 276 0248 1105     	    addi a0, a0, 4
+ 277 024a 9105     	    addi a1, a1, 4
+ 278 024c E3EAC5FE 	    bltu a1, a2, 1b
+ 279              	2:
+ 280              	    /* Clear bss section */
+ 281 0250 17050000 	    la a0, __bss_start
+ 281      13050500 
+ 282 0258 97050000 	    la a1, _end
+ 282      93850500 
+ 283 0260 6377B500 	    bgeu a0, a1, 2f
+ 284              	1:
+ 285 0264 23200500 	    sw zero, (a0)
+ 286 0268 1105     	    addi a0, a0, 4
+ 287 026a E36DB5FE 	    bltu a0, a1, 1b
+ 288              	2:
+ 289              	
+ 290              	    /*
+ 291              	     * Call vendor defined SystemInit to
+ 292              	     * initialize the micro-controller system
+ 293              	     */
+ 294 026e 97000000 	    call SystemInit
+ 294      E7800000 
+ 295              	
+ 296              	    /* Call global constructors */
+ 297 0276 17050000 	    la a0, __libc_fini_array
+ 297      13050500 
+ 298 027e 97000000 	    call atexit
+ 298      E7800000 
+ 299              	    /* Call C/C++ constructor start up code */
+ 300 0286 97000000 	    call __libc_init_array
+ 300      E7800000 
+ 301              	
+ 302              	    /* do pre-init steps before main */
+ 303 028e 97000000 	    call _premain_init
+ 303      E7800000 
+ 304              	    /* ===== Call Main Function  ===== */
+ 305              	    /* argc = argv = 0 */
+ 306 0296 0145     	    li a0, 0
+ 307 0298 8145     	    li a1, 0
+ 308 029a 97000000 	    call main
+ 308      E7800000 
+ 309              	    /* do post-main steps after main */
+ 310 02a2 97000000 	    call _postmain_fini
+ 310      E7800000 
+ 311              	
+ 312              	1:
+ 313 02aa 01A0     	    j 1b
+DEFINED SYMBOLS
+../Firmware/RISCV/env_Eclipse/start.S:104    .init:0000000000000000 vector_base
+../Firmware/RISCV/env_Eclipse/start.S:225    .init:00000000000001d0 _start
+../Firmware/RISCV/env_Eclipse/start.S:105    .init:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:228    .init:00000000000001d0 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:232    .init:00000000000001d4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:234    .init:00000000000001dc .L0 
+../Firmware/RISCV/env_Eclipse/start.S:237    .init:00000000000001e4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:238    .init:00000000000001e8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:240    .init:00000000000001ec .L0 
+../Firmware/RISCV/env_Eclipse/start.S:241    .init:00000000000001f4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:244    .init:00000000000001f8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:245    .init:0000000000000200 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:246    .init:0000000000000204 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:249    .init:0000000000000208 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:250    .init:0000000000000210 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:253    .init:0000000000000214 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:254    .init:0000000000000218 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:255    .init:000000000000021c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:265    .init:0000000000000220 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:269    .init:0000000000000224 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:270    .init:000000000000022c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:271    .init:0000000000000234 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:272    .init:000000000000023c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:274    .init:0000000000000240 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:275    .init:0000000000000244 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:276    .init:0000000000000248 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:277    .init:000000000000024a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:278    .init:000000000000024c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:281    .init:0000000000000250 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:282    .init:0000000000000258 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:283    .init:0000000000000260 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:285    .init:0000000000000264 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:286    .init:0000000000000268 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:287    .init:000000000000026a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:294    .init:000000000000026e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:297    .init:0000000000000276 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:298    .init:000000000000027e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:300    .init:0000000000000286 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:303    .init:000000000000028e .L0 
+../Firmware/RISCV/env_Eclipse/start.S:306    .init:0000000000000296 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:307    .init:0000000000000298 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:308    .init:000000000000029a .L0 
+../Firmware/RISCV/env_Eclipse/start.S:310    .init:00000000000002a2 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002aa .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002ac .L0 
+                            .init:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:313    .init:00000000000002ac .L0 
+                       .debug_str:0000000000000000 .L0 
+                       .debug_str:0000000000000026 .L0 
+                       .debug_str:0000000000000062 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:232    .init:00000000000001d4 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:234    .init:00000000000001dc .L0 
+../Firmware/RISCV/env_Eclipse/start.S:240    .init:00000000000001ec .L0 
+../Firmware/RISCV/env_Eclipse/start.S:244    .init:00000000000001f8 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:249    .init:0000000000000208 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:269    .init:0000000000000224 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:270    .init:000000000000022c .L0 
+../Firmware/RISCV/env_Eclipse/start.S:271    .init:0000000000000234 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:281    .init:0000000000000250 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:282    .init:0000000000000258 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:297    .init:0000000000000276 .L0 
+../Firmware/RISCV/env_Eclipse/start.S:279    .init:0000000000000250 .L21
+../Firmware/RISCV/env_Eclipse/start.S:273    .init:0000000000000240 .L11
+../Firmware/RISCV/env_Eclipse/start.S:288    .init:000000000000026e .L22
+../Firmware/RISCV/env_Eclipse/start.S:284    .init:0000000000000264 .L12
+../Firmware/RISCV/env_Eclipse/start.S:312    .init:00000000000002aa .L13
+
+UNDEFINED SYMBOLS
+eclic_msip_handler
+eclic_mtip_handler
+WWDGT_IRQHandler
+LVD_IRQHandler
+TAMPER_STAMP_IRQHandler
+RTC_WKUP_IRQHandler
+FMC_IRQHandler
+RCU_IRQHandler
+EXTI0_IRQHandler
+EXTI1_IRQHandler
+EXTI2_IRQHandler
+EXTI3_IRQHandler
+EXTI4_IRQHandler
+DMA_Channel0_IRQHandler
+DMA_Channel1_IRQHandler
+DMA_Channel2_IRQHandler
+DMA_Channel3_IRQHandler
+DMA_Channel4_IRQHandler
+DMA_Channel5_IRQHandler
+DMA_Channel6_IRQHandler
+DMA_Channel7_IRQHandler
+ADC_IRQHandler
+EXTI5_9_IRQHandler
+TIMER0_BRK_IRQHandler
+TIMER0_UP_IRQHandler
+TIMER0_CMT_IRQHandler
+TIMER0_Channel_IRQHandler
+TIMER1_IRQHandler
+TIMER2_IRQHandler
+I2C0_EV_IRQHandler
+I2C0_ER_IRQHandler
+I2C1_EV_IRQHandler
+I2C1_ER_IRQHandler
+SPI_IRQHandler
+USART0_IRQHandler
+UART1_IRQHandler
+UART2_IRQHandler
+EXTI10_15_IRQHandler
+RTC_Alarm_IRQHandler
+TIMER15_IRQHandler
+TIMER16_IRQHandler
+I2C0_WKUP_IRQHandler
+USART0_WKUP_IRQHandler
+TIMER5_IRQHandler
+WIFI_TRIGGER_IRQHandler
+WIFI_MAC_IRQHandler
+WIFI_TX_IRQHandler
+WIFI_RX_IRQHandler
+LA_IRQHandler
+WIFI_WKUP_IRQHandler
+BLE_WKUP_IRQHandler
+PLATFORM_WAKE_IRQHandler
+ISO_BT_STAMP0_IRQHandler
+ISO_BT_STAMP1_IRQHandler
+ISO_BT_STAMP2_IRQHandler
+ISO_BT_STAMP3_IRQHandler
+ISO_BT_STAMP4_IRQHandler
+ISO_BT_STAMP5_IRQHandler
+ISO_BT_STAMP6_IRQHandler
+ISO_BT_STAMP7_IRQHandler
+PMU_IRQHandler
+CAU_IRQHandler
+HAU_TRNG_IRQHandler
+WIFI_INT_IRQHandler
+WIFI_SW_TRIG_IRQHandler
+WIFI_FINE_TIMER_TARGET_IRQHandler
+WIFI_STAMP_TARGET1_IRQHandler
+WIFI_STAMP_TARGET2_IRQHandler
+WIFI_STAMP_TARGET3_IRQHandler
+WIFI_ENCRYPTION_ENGINE_IRQHandler
+WIFI_SLEEP_MODE_IRQHandler
+WIFI_HALF_SLOT_IRQHandler
+WIFI_FIFO_ACTIVITY_IRQHandler
+WIFI_ERROR_IRQHandler
+WIFI_FREQ_SELECT_IRQHandler
+EFUSE_IRQHandler
+QSPI_IRQHandler
+PKCAU_IRQHandler
+__global_pointer$
+_sp
+irq_entry
+exc_entry
+_data_lma
+_data
+_edata
+__bss_start
+_end
+SystemInit
+__libc_fini_array
+atexit
+__libc_init_array
+_premain_init
+main
+_postmain_fini

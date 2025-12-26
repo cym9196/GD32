@@ -1,0 +1,328 @@
+   1              	# 1 "../Firmware/RISCV/env_Eclipse/entry.S"
+   1              	/*
+   0              	
+   0              	
+   0              	
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 * Copyright (c) 2025, GigaDevice Semiconductor Inc.
+   4              	 *
+   5              	 * SPDX-License-Identifier: Apache-2.0
+   6              	 *
+   7              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   8              	 * not use this file except in compliance with the License.
+   9              	 * You may obtain a copy of the License at
+  10              	 *
+  11              	 * www.apache.org/licenses/LICENSE-2.0
+  12              	 *
+  13              	 * Unless required by applicable law or agreed to in writing, software
+  14              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  15              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  16              	 * See the License for the specific language governing permissions and
+  17              	 * limitations under the License.
+  18              	 */
+  19              	
+  20              	/* This file refers the RISC-V standard, some adjustments are made according to GigaDevice chips */
+  21              	
+  22              	#include "riscv_encoding.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_ENCODING_H__
+  19              	#define __RISCV_ENCODING_H__
+  20              	
+  21              	#include "riscv_bits.h"
+   1              	/*
+  22              	#ifdef __cplusplus
+  23              	
+  24              	/**
+  25              	 * \brief  Global interrupt disabled
+  26              	 * \details
+  27              	 *  This function disable global interrupt.
+  28              	 * \remarks
+  29              	 *  - All the interrupt requests will be ignored by CPU.
+  30              	 */
+  31              	.macro DISABLE_MIE
+  32              	    csrc CSR_MSTATUS, MSTATUS_MIE
+  33              	.endm
+  34              	
+  35              	/**
+  36              	 * \brief  Macro for context save
+  37              	 * \details
+  38              	 * This macro save ABI defined caller saved registers in the stack.
+  39              	 * \remarks
+  40              	 * - This Macro could use to save context when you enter to interrupt
+  41              	 * or exception
+  42              	*/
+  43              	/* Save caller registers */
+  44              	.macro SAVE_CONTEXT
+  45              	    /* Allocate stack space for context saving */
+  46              	#ifndef __riscv_32e
+  47              	    addi sp, sp, -20*REGBYTES
+  48              	#else
+  49              	    addi sp, sp, -14*REGBYTES
+  50              	#endif /* __riscv_32e */
+  51              	
+  52              	    STORE x1, 0*REGBYTES(sp)
+  53              	    STORE x4, 1*REGBYTES(sp)
+  54              	    STORE x5, 2*REGBYTES(sp)
+  55              	    STORE x6, 3*REGBYTES(sp)
+  56              	    STORE x7, 4*REGBYTES(sp)
+  57              	    STORE x10, 5*REGBYTES(sp)
+  58              	    STORE x11, 6*REGBYTES(sp)
+  59              	    STORE x12, 7*REGBYTES(sp)
+  60              	    STORE x13, 8*REGBYTES(sp)
+  61              	    STORE x14, 9*REGBYTES(sp)
+  62              	    STORE x15, 10*REGBYTES(sp)
+  63              	#ifndef __riscv_32e
+  64              	    STORE x16, 14*REGBYTES(sp)
+  65              	    STORE x17, 15*REGBYTES(sp)
+  66              	    STORE x28, 16*REGBYTES(sp)
+  67              	    STORE x29, 17*REGBYTES(sp)
+  68              	    STORE x30, 18*REGBYTES(sp)
+  69              	    STORE x31, 19*REGBYTES(sp)
+  70              	#endif /* __riscv_32e */
+  71              	.endm
+  72              	
+  73              	/**
+  74              	 * \brief  Macro for restore caller registers
+  75              	 * \details
+  76              	 * This macro restore ABI defined caller saved registers from stack.
+  77              	 * \remarks
+  78              	 * - You could use this macro to restore context before you want return
+  79              	 * from interrupt or exeception
+  80              	 */
+  81              	/* Restore caller registers */
+  82              	.macro RESTORE_CONTEXT
+  83              	    LOAD x1, 0*REGBYTES(sp)
+  84              	    LOAD x4, 1*REGBYTES(sp)
+  85              	    LOAD x5, 2*REGBYTES(sp)
+  86              	    LOAD x6, 3*REGBYTES(sp)
+  87              	    LOAD x7, 4*REGBYTES(sp)
+  88              	    LOAD x10, 5*REGBYTES(sp)
+  89              	    LOAD x11, 6*REGBYTES(sp)
+  90              	    LOAD x12, 7*REGBYTES(sp)
+  91              	    LOAD x13, 8*REGBYTES(sp)
+  92              	    LOAD x14, 9*REGBYTES(sp)
+  93              	    LOAD x15, 10*REGBYTES(sp)
+  94              	#ifndef __riscv_32e
+  95              	    LOAD x16, 14*REGBYTES(sp)
+  96              	    LOAD x17, 15*REGBYTES(sp)
+  97              	    LOAD x28, 16*REGBYTES(sp)
+  98              	    LOAD x29, 17*REGBYTES(sp)
+  99              	    LOAD x30, 18*REGBYTES(sp)
+ 100              	    LOAD x31, 19*REGBYTES(sp)
+ 101              	
+ 102              	    /* De-allocate the stack space */
+ 103              	    addi sp, sp, 20*REGBYTES
+ 104              	#else
+ 105              	    /* De-allocate the stack space */
+ 106              	    addi sp, sp, 14*REGBYTES
+ 107              	#endif /* __riscv_32e */
+ 108              	
+ 109              	.endm
+ 110              	
+ 111              	/**
+ 112              	 * \brief  Macro for save necessary CSRs to stack
+ 113              	 * \details
+ 114              	 * This macro store MCAUSE, MEPC, MSUBM to stack.
+ 115              	 */
+ 116              	.macro SAVE_CSR_CONTEXT
+ 117              	    /* Store CSR mcause to stack using pushmcause */
+ 118              	    csrrwi  x0, CSR_PUSHMCAUSE, 11
+ 119              	    /* Store CSR mepc to stack using pushmepc */
+ 120              	    csrrwi  x0, CSR_PUSHMEPC, 12
+ 121              	    /* Store CSR msub to stack using pushmsub */
+ 122              	    csrrwi  x0, CSR_PUSHMSUBM, 13
+ 123              	.endm
+ 124              	
+ 125              	/**
+ 126              	 * \brief  Macro for restore necessary CSRs from stack
+ 127              	 * \details
+ 128              	 * This macro restore MSUBM, MEPC, MCAUSE from stack.
+ 129              	 */
+ 130              	.macro RESTORE_CSR_CONTEXT
+ 131              	    LOAD x5,  13*REGBYTES(sp)
+ 132              	    csrw CSR_MSUBM, x5
+ 133              	    LOAD x5,  12*REGBYTES(sp)
+ 134              	    csrw CSR_MEPC, x5
+ 135              	    LOAD x5,  11*REGBYTES(sp)
+ 136              	    csrw CSR_MCAUSE, x5
+ 137              	.endm
+ 138              	
+ 139              	/**
+ 140              	 * \brief  Exception/NMI Entry
+ 141              	 * \details
+ 142              	 * This function provide common entry functions for exception/nmi.
+ 143              	 * \remarks
+ 144              	 * This function provide a default exception/nmi entry.
+ 145              	 * ABI defined caller save register and some CSR registers
+ 146              	 * to be saved before enter interrupt handler and be restored before return.
+ 147              	 */
+ 148              	.section .text.trap
+ 149              	/* In CLIC mode, the exeception entry must be 64bytes aligned */
+ 150 0000 01001300 	.align 6
+ 150      00001300 
+ 150      00001300 
+ 150      00001300 
+ 150      00001300 
+ 151              	.global exc_entry
+ 152              	.weak exc_entry
+ 153              	exc_entry:
+ 154              	    /* Save the caller saving registers (context) */
+ 155 003e 5D7106C0 	    SAVE_CONTEXT
+ 155      12C216C4 
+ 155      1AC61EC8 
+ 155      2ACA2ECC 
+ 155      32CE36D0 
+ 156              	    /* Save the necessary CSR registers */
+ 157 0062 73D0E57E 	    SAVE_CSR_CONTEXT
+ 157      7350F67E 
+ 157      73D0B67E 
+ 158              	
+ 159              	    /*
+ 160              	     * Set the exception handler function arguments
+ 161              	     * argument 1: mcause value
+ 162              	     * argument 2: current stack point(SP) value
+ 163              	     */
+ 164 006e 73252034 	    csrr a0, mcause
+ 165 0072 8A85     	    mv a1, sp
+ 166              	    /*
+ 167              	     * TODO: Call the exception handler function
+ 168              	     * By default, the function template is provided in
+ 169              	     * handlers.c, you can adjust it as you want
+ 170              	     */
+ 171 0074 97000000 	    call core_exception_handler
+ 171      E7800000 
+ 172              	
+ 173              	    /* Restore the necessary CSR registers */
+ 174 007c D2527390 	    RESTORE_CSR_CONTEXT
+ 174      427CC252 
+ 174      73901234 
+ 174      B2527390 
+ 174      2234
+ 175              	    /* Restore the caller saving registers (context) */
+ 176 008e 82401242 	    RESTORE_CONTEXT
+ 176      A2423243 
+ 176      C2435245 
+ 176      E2457246 
+ 176      82561257 
+ 177              	
+ 178              	    /* Return to regular code */
+ 179 00b2 73002030 	    mret
+ 180              	
+ 181              	/**
+ 182              	 * \brief  Non-Vector Interrupt Entry
+ 183              	 * \details
+ 184              	 * This function provide common entry functions for handling
+ 185              	 * non-vector interrupts
+ 186              	 * \remarks
+ 187              	 * This function provide a default non-vector interrupt entry.
+ 188              	 * ABI defined caller save register and some CSR registers need
+ 189              	 * to be saved before enter interrupt handler and be restored before return.
+ 190              	 */
+ 191 00b6 00000000 	.section      .text.irq
+ 191      00000000 
+ 191      0000
+ 192              	/* In CLIC mode, the interrupt entry must be 4bytes aligned */
+ 193 0000 0100     	.align 2
+ 194              	.global irq_entry
+ 195              	.weak irq_entry
+ 196              	/* This label will be set to MTVT2 register */
+ 197              	irq_entry:
+ 198              	    /* Save the caller saving registers (context) */
+ 199 0002 5D7106C0 	    SAVE_CONTEXT
+ 199      12C216C4 
+ 199      1AC61EC8 
+ 199      2ACA2ECC 
+ 199      32CE36D0 
+ 200              	    /* Save the necessary CSR registers */
+ 201 0026 73D0E57E 	    SAVE_CSR_CONTEXT
+ 201      7350F67E 
+ 201      73D0B67E 
+ 202              	
+ 203              	    /* This special CSR read/write operation, which is actually
+ 204              	     * claim the CLIC to find its pending highest ID, if the ID
+ 205              	     * is not 0, then automatically enable the mstatus.MIE, and
+ 206              	     * jump to its vector-entry-label, and update the link register
+ 207              	     */
+ 208 0032 F390D07E 	    csrrw ra, CSR_JALMNXTI, ra
+ 209              	
+ 210              	    /* Critical section with interrupts disabled */
+ 211 0036 73700430 	    DISABLE_MIE
+ 212              	
+ 213              	    /* Restore the necessary CSR registers */
+ 214 003a D2527390 	    RESTORE_CSR_CONTEXT
+ 214      427CC252 
+ 214      73901234 
+ 214      B2527390 
+ 214      2234
+ 215              	    /* Restore the caller saving registers (context) */
+ 216 004c 82401242 	    RESTORE_CONTEXT
+ 216      A2423243 
+ 216      C2435245 
+ 216      E2457246 
+ 216      82561257 
+ 217              	
+ 218              	    /* Return to regular code */
+ 219 0070 73002030 	    mret
+ 220              	
+ 221              	/* Default Handler for Exceptions / Interrupts */
+ 222              	.global default_intexc_handler
+ 223              	.weak default_intexc_handler
+ 224              	Undef_Handler:
+ 225              	default_intexc_handler:
+ 226              	1:
+ 227 0074 01A00000 	    j 1b
+DEFINED SYMBOLS
+../Firmware/RISCV/env_Eclipse/entry.S:153    .text.trap:000000000000003e exc_entry
+../Firmware/RISCV/env_Eclipse/entry.S:155    .text.trap:000000000000003e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:157    .text.trap:0000000000000062 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:164    .text.trap:000000000000006e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:165    .text.trap:0000000000000072 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:171    .text.trap:0000000000000074 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:174    .text.trap:000000000000007c .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:176    .text.trap:000000000000008e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:179    .text.trap:00000000000000b2 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:197    .text.irq:0000000000000002 irq_entry
+../Firmware/RISCV/env_Eclipse/entry.S:199    .text.irq:0000000000000002 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:201    .text.irq:0000000000000026 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:208    .text.irq:0000000000000032 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:211    .text.irq:0000000000000036 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:214    .text.irq:000000000000003a .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:216    .text.irq:000000000000004c .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:219    .text.irq:0000000000000070 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:225    .text.irq:0000000000000074 default_intexc_handler
+../Firmware/RISCV/env_Eclipse/entry.S:224    .text.irq:0000000000000074 Undef_Handler
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000074 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                    .debug_ranges:0000000000000000 .L0 
+                       .text.trap:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+                        .text.irq:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                       .text.trap:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+                        .text.irq:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                       .debug_str:0000000000000000 .L0 
+                       .debug_str:0000000000000026 .L0 
+                       .debug_str:0000000000000062 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:226    .text.irq:0000000000000074 .L11
+
+UNDEFINED SYMBOLS
+core_exception_handler

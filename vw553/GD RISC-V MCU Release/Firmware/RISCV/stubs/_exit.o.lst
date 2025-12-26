@@ -1,0 +1,148 @@
+   1              		.file	"_exit.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.rodata
+  10              		.align	2
+  11              	.LC1:
+  12 0000 0A00     		.string	"\n"
+  13 0002 0000     		.align	2
+  14              	.LC0:
+  15 0004 0A50726F 		.string	"\nProgram has exited with code:"
+  15      6772616D 
+  15      20686173 
+  15      20657869 
+  15      74656420 
+  16              		.section	.text._exit,"ax",@progbits
+  17              		.align	1
+  18              		.globl	_exit
+  20              	_exit:
+  21              	.LFB1:
+  22              		.file 1 "../Firmware/RISCV/stubs/_exit.c"
+   1:../Firmware/RISCV/stubs/_exit.c **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/_exit.c **** 
+   3:../Firmware/RISCV/stubs/_exit.c **** #include <unistd.h>
+   4:../Firmware/RISCV/stubs/_exit.c **** 
+   5:../Firmware/RISCV/stubs/_exit.c **** #include "stub.h"
+   6:../Firmware/RISCV/stubs/_exit.c **** 
+   7:../Firmware/RISCV/stubs/_exit.c **** 
+   8:../Firmware/RISCV/stubs/_exit.c **** void _exit(int code)
+   9:../Firmware/RISCV/stubs/_exit.c **** {
+  23              		.loc 1 9 1
+  24              		.cfi_startproc
+  25 0000 3971     		addi	sp,sp,-64
+  26              		.cfi_def_cfa_offset 64
+  27 0002 06DE     		sw	ra,60(sp)
+  28 0004 22DC     		sw	s0,56(sp)
+  29              		.cfi_offset 1, -4
+  30              		.cfi_offset 8, -8
+  31 0006 8000     		addi	s0,sp,64
+  32              		.cfi_def_cfa 8, 0
+  33 0008 2326A4FC 		sw	a0,-52(s0)
+  10:../Firmware/RISCV/stubs/_exit.c ****   const char message[] = "\nProgram has exited with code:";
+  34              		.loc 1 10 14
+  35 000c B7070000 		lui	a5,%hi(.LC0)
+  36 0010 93870700 		addi	a5,a5,%lo(.LC0)
+  37 0014 83A80700 		lw	a7,0(a5)
+  38 0018 03A84700 		lw	a6,4(a5)
+  39 001c 8847     		lw	a0,8(a5)
+  40 001e CC47     		lw	a1,12(a5)
+  41 0020 904B     		lw	a2,16(a5)
+  42 0022 D44B     		lw	a3,20(a5)
+  43 0024 984F     		lw	a4,24(a5)
+  44 0026 232814FD 		sw	a7,-48(s0)
+  45 002a 232A04FD 		sw	a6,-44(s0)
+  46 002e 232CA4FC 		sw	a0,-40(s0)
+  47 0032 232EB4FC 		sw	a1,-36(s0)
+  48 0036 2320C4FE 		sw	a2,-32(s0)
+  49 003a 2322D4FE 		sw	a3,-28(s0)
+  50 003e 2324E4FE 		sw	a4,-24(s0)
+  51 0042 03D7C701 		lhu	a4,28(a5)
+  52 0046 2316E4FE 		sh	a4,-20(s0)
+  53 004a 83C7E701 		lbu	a5,30(a5)
+  54 004e 2307F4FE 		sb	a5,-18(s0)
+  11:../Firmware/RISCV/stubs/_exit.c **** 
+  12:../Firmware/RISCV/stubs/_exit.c ****   write(STDERR_FILENO, message, sizeof(message) - 1);
+  55              		.loc 1 12 3
+  56 0052 930704FD 		addi	a5,s0,-48
+  57 0056 7946     		li	a2,30
+  58 0058 BE85     		mv	a1,a5
+  59 005a 0945     		li	a0,2
+  60 005c 97000000 		call	write
+  60      E7800000 
+  13:../Firmware/RISCV/stubs/_exit.c ****   write_hex(STDERR_FILENO, code);
+  61              		.loc 1 13 3
+  62 0064 8327C4FC 		lw	a5,-52(s0)
+  63 0068 BE85     		mv	a1,a5
+  64 006a 0945     		li	a0,2
+  65 006c 97000000 		call	write_hex
+  65      E7800000 
+  14:../Firmware/RISCV/stubs/_exit.c ****   write(STDERR_FILENO, "\n", 1);
+  66              		.loc 1 14 3
+  67 0074 0546     		li	a2,1
+  68 0076 B7070000 		lui	a5,%hi(.LC1)
+  69 007a 93850700 		addi	a1,a5,%lo(.LC1)
+  70 007e 0945     		li	a0,2
+  71 0080 97000000 		call	write
+  71      E7800000 
+  72              	.L2:
+  15:../Firmware/RISCV/stubs/_exit.c **** 
+  16:../Firmware/RISCV/stubs/_exit.c ****   for (;;);
+  73              		.loc 1 16 3 discriminator 1
+  74 0088 01A0     		j	.L2
+  75              		.cfi_endproc
+  76              	.LFE1:
+  78              		.text
+  79              	.Letext0:
+  80              		.file 2 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 _exit.c
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:20     .text._exit:0000000000000000 _exit
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:24     .text._exit:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:25     .text._exit:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:26     .text._exit:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:29     .text._exit:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:30     .text._exit:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:32     .text._exit:0000000000000008 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:35     .text._exit:000000000000000c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:56     .text._exit:0000000000000052 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:62     .text._exit:0000000000000064 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:67     .text._exit:0000000000000074 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:74     .text._exit:0000000000000088 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:75     .text._exit:000000000000008a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:78     .text._exit:000000000000008a .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:14     .rodata:0000000000000004 .LC0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:11     .rodata:0000000000000000 .LC1
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:72     .text._exit:0000000000000088 .L2
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:185    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:349    .debug_str:0000000000000088 .LASF11
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:359    .debug_str:0000000000000176 .LASF12
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:343    .debug_str:0000000000000023 .LASF13
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:329    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:335    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:363    .debug_str:00000000000001a9 .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:353    .debug_str:000000000000015a .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:367    .debug_str:00000000000001c1 .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:361    .debug_str:0000000000000196 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:357    .debug_str:000000000000016d .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:345    .debug_str:000000000000005f .LASF5
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:337    .debug_str:0000000000000000 .LASF6
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:347    .debug_str:0000000000000071 .LASF7
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:339    .debug_str:000000000000000e .LASF8
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:355    .debug_str:0000000000000168 .LASF9
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:365    .debug_str:00000000000001b5 .LASF10
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:351    .debug_str:0000000000000154 .LASF14
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:21     .text._exit:0000000000000000 .LFB1
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:76     .text._exit:000000000000008a .LFE1
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:369    .debug_str:00000000000001cb .LASF15
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:341    .debug_str:000000000000001b .LASF16
+C:\Users\CYMR90~1\AppData\Local\Temp\cc1tkpzk.s:82     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+write
+write_hex

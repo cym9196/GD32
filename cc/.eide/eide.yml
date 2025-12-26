@@ -1,0 +1,134 @@
+version: "4.1"
+name: cc
+type: RISC-V
+deviceName: null
+packDir: null
+srcDirs:
+  - Firmware
+  - GD RISC-V MCU Debug
+  - inc
+  - ldscripts
+  - openocd_gdlink
+  - src
+  - oled
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: 5242111bb91b265d6040b3b4b2683fe1
+targets:
+  GD_RISC-V_MCU_Debug:
+    cppPreprocessAttrs:
+      defineList:
+        - GD_ECLIPSE_GCC
+        - USE_STDPERIPH_DRIVER
+      incList:
+        - Firmware/GD32VW55x_standard_peripheral
+        - Firmware/GD32VW55x_standard_peripheral/Include
+        - Firmware/RISCV/drivers
+        - Firmware/RISCV/stubs
+        - inc
+        - oled
+      libList:
+        - ldscripts
+    excludeList: []
+    toolchain: RISCV_GCC
+    toolchainConfigMap:
+      RISCV_GCC:
+        linkerScriptPath: ldscripts/GD32VW55X.lds
+        options:
+          version: 2
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: -Wl,-Bstatic -DGD_ECLIPSE_GCC -DUSE_STDPERIPH_DRIVER
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            C_FLAGS: -Wl,-Bstatic
+            language-c: c11
+            language-cpp: c++11
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-debug
+            warnings: all-warnings
+          global:
+            abi: ilp32
+            arch: rv32imac
+            code-model: medany
+            misc-control: -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -g3
+            output-debug-info: enable
+          linker:
+            $outputTaskExcludes:
+              - .s19
+            $toolName: auto
+            LD_FLAGS: -nostartfiles
+            output-format: elf
+            remove-unused-input-sections: true
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+    uploader: JLink
+  GD_RISC-V_MCU_Release:
+    cppPreprocessAttrs:
+      defineList:
+        - GD_ECLIPSE_GCC
+        - USE_STDPERIPH_DRIVER
+      incList: []
+      libList:
+        - ldscripts
+    excludeList: []
+    toolchain: RISCV_GCC
+    toolchainConfigMap:
+      RISCV_GCC:
+        linkerScriptPath: ""
+        options:
+          version: 2
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: -Wl,-Bstatic -DGD_ECLIPSE_GCC -DUSE_STDPERIPH_DRIVER
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: ""
+            C_FLAGS: -Wl,-Bstatic
+            language-c: c11
+            language-cpp: c++11
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-debug
+            warnings: all-warnings
+          global:
+            abi: ilp32
+            arch: rv32imac
+            code-model: medlow
+            misc-control:
+              - -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections
+              - -g
+              - -march=rv32imac -mabi=ilp32 -mcmodel=medlow -msmall-data-limit=8 -mdiv
+            output-debug-info: enable
+          linker:
+            $outputTaskExcludes:
+              - .bin
+            LD_FLAGS: ""
+            LIB_FLAGS: ""
+            output-format: elf
+            remove-unused-input-sections: true
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: "null"
+          vendor: "null"
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+    uploader: JLink

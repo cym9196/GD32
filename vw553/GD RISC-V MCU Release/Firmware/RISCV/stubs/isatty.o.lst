@@ -1,0 +1,107 @@
+   1              		.file	"isatty.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.text._isatty,"ax",@progbits
+  10              		.align	1
+  11              		.globl	_isatty
+  13              	_isatty:
+  14              	.LFB0:
+  15              		.file 1 "../Firmware/RISCV/stubs/isatty.c"
+   1:../Firmware/RISCV/stubs/isatty.c **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/isatty.c **** 
+   3:../Firmware/RISCV/stubs/isatty.c **** #include <unistd.h>
+   4:../Firmware/RISCV/stubs/isatty.c **** 
+   5:../Firmware/RISCV/stubs/isatty.c **** int _isatty(int fd)
+   6:../Firmware/RISCV/stubs/isatty.c **** {
+  16              		.loc 1 6 1
+  17              		.cfi_startproc
+  18 0000 0111     		addi	sp,sp,-32
+  19              		.cfi_def_cfa_offset 32
+  20 0002 22CE     		sw	s0,28(sp)
+  21              		.cfi_offset 8, -4
+  22 0004 0010     		addi	s0,sp,32
+  23              		.cfi_def_cfa 8, 0
+  24 0006 2326A4FE 		sw	a0,-20(s0)
+   7:../Firmware/RISCV/stubs/isatty.c ****   if (fd == STDOUT_FILENO || fd == STDERR_FILENO)
+  25              		.loc 1 7 6
+  26 000a 0327C4FE 		lw	a4,-20(s0)
+  27 000e 8547     		li	a5,1
+  28 0010 6307F700 		beq	a4,a5,.L2
+  29              		.loc 1 7 27 discriminator 1
+  30 0014 0327C4FE 		lw	a4,-20(s0)
+  31 0018 8947     		li	a5,2
+  32 001a 6314F700 		bne	a4,a5,.L3
+  33              	.L2:
+   8:../Firmware/RISCV/stubs/isatty.c ****     return 1;
+  34              		.loc 1 8 12
+  35 001e 8547     		li	a5,1
+  36 0020 11A0     		j	.L4
+  37              	.L3:
+   9:../Firmware/RISCV/stubs/isatty.c **** 
+  10:../Firmware/RISCV/stubs/isatty.c ****   return 0;
+  38              		.loc 1 10 10
+  39 0022 8147     		li	a5,0
+  40              	.L4:
+  11:../Firmware/RISCV/stubs/isatty.c **** }
+  41              		.loc 1 11 1
+  42 0024 3E85     		mv	a0,a5
+  43 0026 7244     		lw	s0,28(sp)
+  44              		.cfi_restore 8
+  45              		.cfi_def_cfa 2, 32
+  46 0028 0561     		addi	sp,sp,32
+  47              		.cfi_def_cfa_offset 0
+  48 002a 8280     		jr	ra
+  49              		.cfi_endproc
+  50              	.LFE0:
+  52              		.text
+  53              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 isatty.c
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:13     .text._isatty:0000000000000000 _isatty
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:17     .text._isatty:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:18     .text._isatty:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:19     .text._isatty:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:21     .text._isatty:0000000000000004 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:23     .text._isatty:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:26     .text._isatty:000000000000000a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:30     .text._isatty:0000000000000014 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:35     .text._isatty:000000000000001e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:39     .text._isatty:0000000000000022 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:42     .text._isatty:0000000000000024 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:44     .text._isatty:0000000000000028 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:45     .text._isatty:0000000000000028 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:47     .text._isatty:000000000000002a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:49     .text._isatty:000000000000002c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:52     .text._isatty:000000000000002c .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:33     .text._isatty:000000000000001e .L2
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:37     .text._isatty:0000000000000022 .L3
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:40     .text._isatty:0000000000000024 .L4
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:138    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:254    .debug_str:0000000000000069 .LASF11
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:264    .debug_str:0000000000000168 .LASF12
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:252    .debug_str:000000000000002d .LASF13
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:238    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:244    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:268    .debug_str:000000000000019c .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:258    .debug_str:000000000000014c .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:274    .debug_str:00000000000001bc .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:266    .debug_str:0000000000000189 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:262    .debug_str:000000000000015f .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:250    .debug_str:000000000000001b .LASF5
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:246    .debug_str:0000000000000000 .LASF6
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:256    .debug_str:0000000000000135 .LASF7
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:248    .debug_str:000000000000000e .LASF8
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:260    .debug_str:000000000000015a .LASF9
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:270    .debug_str:00000000000001a8 .LASF10
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:272    .debug_str:00000000000001b4 .LASF14
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:14     .text._isatty:0000000000000000 .LFB0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:50     .text._isatty:000000000000002c .LFE0
+C:\Users\CYMR90~1\AppData\Local\Temp\cc5BjgQu.s:55     .debug_info:0000000000000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

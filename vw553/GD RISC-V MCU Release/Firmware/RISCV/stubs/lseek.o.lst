@@ -1,0 +1,181 @@
+   1              		.file	"lseek.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.text._stub,"ax",@progbits
+  10              		.align	1
+  12              	_stub:
+  13              	.LFB0:
+  14              		.file 1 "../Firmware/RISCV/stubs/stub.h"
+   1:../Firmware/RISCV/stubs/stub.h **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/stub.h **** #ifndef _NUCLEI_SYS_STUB_H
+   3:../Firmware/RISCV/stubs/stub.h **** #define _NUCLEI_SYS_STUB_H
+   4:../Firmware/RISCV/stubs/stub.h **** 
+   5:../Firmware/RISCV/stubs/stub.h **** #include <stdint.h>
+   6:../Firmware/RISCV/stubs/stub.h **** #if   defined (__GNUC__)
+   7:../Firmware/RISCV/stubs/stub.h **** #include <unistd.h>
+   8:../Firmware/RISCV/stubs/stub.h **** #endif
+   9:../Firmware/RISCV/stubs/stub.h **** 
+  10:../Firmware/RISCV/stubs/stub.h **** void write_hex(int fd, unsigned long int hex);
+  11:../Firmware/RISCV/stubs/stub.h **** 
+  12:../Firmware/RISCV/stubs/stub.h **** static inline int _stub(int err)
+  13:../Firmware/RISCV/stubs/stub.h **** {
+  15              		.loc 1 13 1
+  16              		.cfi_startproc
+  17 0000 0111     		addi	sp,sp,-32
+  18              		.cfi_def_cfa_offset 32
+  19 0002 22CE     		sw	s0,28(sp)
+  20              		.cfi_offset 8, -4
+  21 0004 0010     		addi	s0,sp,32
+  22              		.cfi_def_cfa 8, 0
+  23 0006 2326A4FE 		sw	a0,-20(s0)
+  14:../Firmware/RISCV/stubs/stub.h ****   return -1;
+  24              		.loc 1 14 10
+  25 000a FD57     		li	a5,-1
+  15:../Firmware/RISCV/stubs/stub.h **** }
+  26              		.loc 1 15 1
+  27 000c 3E85     		mv	a0,a5
+  28 000e 7244     		lw	s0,28(sp)
+  29              		.cfi_restore 8
+  30              		.cfi_def_cfa 2, 32
+  31 0010 0561     		addi	sp,sp,32
+  32              		.cfi_def_cfa_offset 0
+  33 0012 8280     		jr	ra
+  34              		.cfi_endproc
+  35              	.LFE0:
+  37              		.section	.text._lseek,"ax",@progbits
+  38              		.align	1
+  39              		.globl	_lseek
+  41              	_lseek:
+  42              	.LFB1:
+  43              		.file 2 "../Firmware/RISCV/stubs/lseek.c"
+   1:../Firmware/RISCV/stubs/lseek.c **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/lseek.c **** 
+   3:../Firmware/RISCV/stubs/lseek.c **** #include <errno.h>
+   4:../Firmware/RISCV/stubs/lseek.c **** #include <unistd.h>
+   5:../Firmware/RISCV/stubs/lseek.c **** #include <sys/types.h>
+   6:../Firmware/RISCV/stubs/lseek.c **** #include "stub.h"
+   7:../Firmware/RISCV/stubs/lseek.c **** 
+   8:../Firmware/RISCV/stubs/lseek.c **** off_t _lseek(int fd, off_t ptr, int dir)
+   9:../Firmware/RISCV/stubs/lseek.c **** {
+  44              		.loc 2 9 1
+  45              		.cfi_startproc
+  46 0000 0111     		addi	sp,sp,-32
+  47              		.cfi_def_cfa_offset 32
+  48 0002 06CE     		sw	ra,28(sp)
+  49 0004 22CC     		sw	s0,24(sp)
+  50              		.cfi_offset 1, -4
+  51              		.cfi_offset 8, -8
+  52 0006 0010     		addi	s0,sp,32
+  53              		.cfi_def_cfa 8, 0
+  54 0008 2326A4FE 		sw	a0,-20(s0)
+  55 000c 2324B4FE 		sw	a1,-24(s0)
+  56 0010 2322C4FE 		sw	a2,-28(s0)
+  10:../Firmware/RISCV/stubs/lseek.c ****   if (isatty(fd))
+  57              		.loc 2 10 7
+  58 0014 0325C4FE 		lw	a0,-20(s0)
+  59 0018 97000000 		call	isatty
+  59      E7800000 
+  60 0020 AA87     		mv	a5,a0
+  61              		.loc 2 10 6
+  62 0022 99C3     		beq	a5,zero,.L4
+  11:../Firmware/RISCV/stubs/lseek.c ****     return 0;
+  63              		.loc 2 11 12
+  64 0024 8147     		li	a5,0
+  65 0026 39A0     		j	.L5
+  66              	.L4:
+  12:../Firmware/RISCV/stubs/lseek.c **** 
+  13:../Firmware/RISCV/stubs/lseek.c ****   return _stub(EBADF);
+  67              		.loc 2 13 10
+  68 0028 2545     		li	a0,9
+  69 002a 97000000 		call	_stub
+  69      E7800000 
+  70 0032 AA87     		mv	a5,a0
+  71              	.L5:
+  14:../Firmware/RISCV/stubs/lseek.c **** }
+  72              		.loc 2 14 1
+  73 0034 3E85     		mv	a0,a5
+  74 0036 F240     		lw	ra,28(sp)
+  75              		.cfi_restore 1
+  76 0038 6244     		lw	s0,24(sp)
+  77              		.cfi_restore 8
+  78              		.cfi_def_cfa 2, 32
+  79 003a 0561     		addi	sp,sp,32
+  80              		.cfi_def_cfa_offset 0
+  81 003c 8280     		jr	ra
+  82              		.cfi_endproc
+  83              	.LFE1:
+  85              		.text
+  86              	.Letext0:
+  87              		.file 3 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+  88              		.file 4 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lseek.c
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:12     .text._stub:0000000000000000 _stub
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:16     .text._stub:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:17     .text._stub:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:18     .text._stub:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:20     .text._stub:0000000000000004 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:22     .text._stub:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:25     .text._stub:000000000000000a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:27     .text._stub:000000000000000c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:29     .text._stub:0000000000000010 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:30     .text._stub:0000000000000010 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:32     .text._stub:0000000000000012 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:34     .text._stub:0000000000000014 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:41     .text._lseek:0000000000000000 _lseek
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:45     .text._lseek:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:46     .text._lseek:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:47     .text._lseek:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:50     .text._lseek:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:51     .text._lseek:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:53     .text._lseek:0000000000000008 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:58     .text._lseek:0000000000000014 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:62     .text._lseek:0000000000000022 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:64     .text._lseek:0000000000000024 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:68     .text._lseek:0000000000000028 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:73     .text._lseek:0000000000000034 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:75     .text._lseek:0000000000000038 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:77     .text._lseek:000000000000003a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:78     .text._lseek:000000000000003a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:80     .text._lseek:000000000000003c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:82     .text._lseek:000000000000003e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:37     .text._stub:0000000000000014 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:85     .text._lseek:000000000000003e .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:66     .text._lseek:0000000000000028 .L4
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:71     .text._lseek:0000000000000034 .L5
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:230    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:398    .debug_str:000000000000008e .LASF14
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:404    .debug_str:000000000000016f .LASF15
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:390    .debug_str:0000000000000023 .LASF16
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:374    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:382    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:386    .debug_str:000000000000000e .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:384    .debug_str:0000000000000000 .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:414    .debug_str:00000000000001bd .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:412    .debug_str:00000000000001b1 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:402    .debug_str:0000000000000161 .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:418    .debug_str:00000000000001d0 .LASF5
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:410    .debug_str:000000000000019e .LASF6
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:408    .debug_str:0000000000000195 .LASF7
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:392    .debug_str:000000000000005f .LASF8
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:396    .debug_str:0000000000000077 .LASF9
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:400    .debug_str:000000000000015a .LASF10
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:388    .debug_str:000000000000001b .LASF11
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:420    .debug_str:00000000000001da .LASF12
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:394    .debug_str:0000000000000071 .LASF13
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:416    .debug_str:00000000000001c9 .LASF17
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:42     .text._lseek:0000000000000000 .LFB1
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:83     .text._lseek:000000000000003e .LFE1
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:406    .debug_str:000000000000018f .LASF18
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:13     .text._stub:0000000000000000 .LFB0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:35     .text._stub:0000000000000014 .LFE0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccfBHviu.s:90     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+isatty

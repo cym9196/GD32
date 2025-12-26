@@ -1,0 +1,1122 @@
+   1              	# 1 "../Firmware/RISCV/env_Eclipse/entry.S"
+   1              	/*
+   0              	
+   0              	
+   0              	
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 * Copyright (c) 2025, GigaDevice Semiconductor Inc.
+   4              	 *
+   5              	 * SPDX-License-Identifier: Apache-2.0
+   6              	 *
+   7              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   8              	 * not use this file except in compliance with the License.
+   9              	 * You may obtain a copy of the License at
+  10              	 *
+  11              	 * www.apache.org/licenses/LICENSE-2.0
+  12              	 *
+  13              	 * Unless required by applicable law or agreed to in writing, software
+  14              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  15              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  16              	 * See the License for the specific language governing permissions and
+  17              	 * limitations under the License.
+  18              	 */
+  19              	
+  20              	/* This file refers the RISC-V standard, some adjustments are made according to GigaDevice chips */
+  21              	
+  22              	#include "riscv_encoding.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_ENCODING_H__
+  19              	#define __RISCV_ENCODING_H__
+  20              	
+  21              	#include "riscv_bits.h"
+   1              	/*
+   2              	 * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3              	 *
+   4              	 * SPDX-License-Identifier: Apache-2.0
+   5              	 *
+   6              	 * Licensed under the Apache License, Version 2.0 (the License); you may
+   7              	 * not use this file except in compliance with the License.
+   8              	 * You may obtain a copy of the License at
+   9              	 *
+  10              	 * www.apache.org/licenses/LICENSE-2.0
+  11              	 *
+  12              	 * Unless required by applicable law or agreed to in writing, software
+  13              	 * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  14              	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  15              	 * See the License for the specific language governing permissions and
+  16              	 * limitations under the License.
+  17              	 */
+  18              	#ifndef __RISCV_BITS_H__
+  19              	#define __RISCV_BITS_H__
+  20              	
+  21              	#ifdef __cplusplus
+  22              	 extern "C" {
+  23              	#endif
+  24              	
+  25              	#if __riscv_xlen == 64
+  26              	# define SLL32                  sllw
+  27              	# define STORE                  sd
+  28              	# define LOAD                   ld
+  29              	# define LWU                    lwu
+  30              	# define LOG_REGBYTES           3
+  31              	#else
+  32              	# define SLL32                  sll
+  33              	# define STORE                  sw
+  34              	# define LOAD                   lw
+  35              	# define LWU                    lw
+  36              	# define LOG_REGBYTES           2
+  37              	#endif /* __riscv_xlen */
+  38              	
+  39              	#define REGBYTES (1 << LOG_REGBYTES)
+  40              	
+  41              	#if defined(__riscv_flen)
+  42              	#if __riscv_flen == 64
+  43              	# define FPSTORE                fsd
+  44              	# define FPLOAD                 fld
+  45              	# define LOG_FPREGBYTES         3
+  46              	#else
+  47              	# define FPSTORE                fsw
+  48              	# define FPLOAD                 flw
+  49              	# define LOG_FPREGBYTES         2
+  50              	#endif /* __riscv_flen == 64 */
+  51              	#define FPREGBYTES              (1 << LOG_FPREGBYTES)
+  52              	#endif /* __riscv_flen */
+  53              	
+  54              	#define __rv_likely(x)          __builtin_expect((x), 1)
+  55              	#define __rv_unlikely(x)        __builtin_expect((x), 0)
+  56              	
+  57              	#define __RV_ROUNDUP(a, b)      ((((a)-1)/(b)+1)*(b))
+  58              	#define __RV_ROUNDDOWN(a, b)    ((a)/(b)*(b))
+  59              	
+  60              	#define __RV_MAX(a, b)          ((a) > (b) ? (a) : (b))
+  61              	#define __RV_MIN(a, b)          ((a) < (b) ? (a) : (b))
+  62              	#define __RV_CLAMP(a, lo, hi)   MIN(MAX(a, lo), hi)
+  63              	
+  64              	#define __RV_EXTRACT_FIELD(val, which)                  (((val) & (which)) / ((which) & ~((which)-1
+  65              	#define __RV_INSERT_FIELD(val, which, fieldval)         (((val) & ~(which)) | ((fieldval) * ((which
+  66              	
+  67              	#ifdef __ASSEMBLY__
+  68              	#define _AC(X,Y)                X
+  69              	#define _AT(T,X)                X
+  70              	#else
+  71              	#define __AC(X,Y)               (X##Y)
+  72              	#define _AC(X,Y)                __AC(X,Y)
+  73              	#define _AT(T,X)                ((T)(X))
+  74              	#endif /* __ASSEMBLY__ */
+  75              	
+  76              	#define _UL(x)                  (_AC(x, UL))
+  77              	#define _ULL(x)                 (_AC(x, ULL))
+  78              	
+  79              	#define _BITUL(x)               (_UL(1) << (x))
+  80              	#define _BITULL(x)              (_ULL(1) << (x))
+  81              	
+  82              	#define UL(x)                   (_UL(x))
+  83              	#define ULL(x)                  (_ULL(x))
+  84              	
+  85              	#define STR(x)                  XSTR(x)
+  86              	#define XSTR(x)                 #x
+  87              	#define __STR(s)                #s
+  88              	#define STRINGIFY(s)            __STR(s)
+  89              	
+  22              	#ifdef __cplusplus
+  23              	 extern "C" {
+  24              	#endif
+  25              	/**
+  26              	 * \defgroup NMSIS_Core_CSR_Encoding    Core CSR Encodings
+  27              	 * \ingroup  NMSIS_Core
+  28              	 * \brief    NMSIS Core CSR Encodings
+  29              	 * \details
+  30              	 *
+  31              	 * The following macros are used for CSR encodings
+  32              	 *   @{
+  33              	 */
+  34              	/* === Standard CSR bit mask === */
+  35              	#define MSTATUS_UIE         0x00000001
+  36              	#define MSTATUS_SIE         0x00000002
+  37              	#define MSTATUS_HIE         0x00000004
+  38              	#define MSTATUS_MIE         0x00000008
+  39              	#define MSTATUS_UPIE        0x00000010
+  40              	#define MSTATUS_SPIE        0x00000020
+  41              	#define MSTATUS_HPIE        0x00000040
+  42              	#define MSTATUS_MPIE        0x00000080
+  43              	#define MSTATUS_SPP         0x00000100
+  44              	#define MSTATUS_MPP         0x00001800
+  45              	#define MSTATUS_FS          0x00006000
+  46              	#define MSTATUS_XS          0x00018000
+  47              	#define MSTATUS_MPRV        0x00020000
+  48              	#define MSTATUS_PUM         0x00040000
+  49              	#define MSTATUS_MXR         0x00080000
+  50              	#define MSTATUS_VM          0x1F000000
+  51              	#define MSTATUS32_SD        0x80000000
+  52              	#define MSTATUS64_SD        0x8000000000000000
+  53              	
+  54              	#define MSTATUS_FS_INITIAL  0x00002000
+  55              	#define MSTATUS_FS_CLEAN    0x00004000
+  56              	#define MSTATUS_FS_DIRTY    0x00006000
+  57              	
+  58              	#define SSTATUS_UIE         0x00000001
+  59              	#define SSTATUS_SIE         0x00000002
+  60              	#define SSTATUS_UPIE        0x00000010
+  61              	#define SSTATUS_SPIE        0x00000020
+  62              	#define SSTATUS_SPP         0x00000100
+  63              	#define SSTATUS_FS          0x00006000
+  64              	#define SSTATUS_XS          0x00018000
+  65              	#define SSTATUS_PUM         0x00040000
+  66              	#define SSTATUS32_SD        0x80000000
+  67              	#define SSTATUS64_SD        0x8000000000000000
+  68              	
+  69              	#define CSR_MCACHE_CTL_IE   0x00000001
+  70              	#define CSR_MCACHE_CTL_DE   0x00010000
+  71              	
+  72              	#define DCSR_XDEBUGVER      (3U<<30)
+  73              	#define DCSR_NDRESET        (1<<29)
+  74              	#define DCSR_FULLRESET      (1<<28)
+  75              	#define DCSR_EBREAKM        (1<<15)
+  76              	#define DCSR_EBREAKH        (1<<14)
+  77              	#define DCSR_EBREAKS        (1<<13)
+  78              	#define DCSR_EBREAKU        (1<<12)
+  79              	#define DCSR_STOPCYCLE      (1<<10)
+  80              	#define DCSR_STOPTIME       (1<<9)
+  81              	#define DCSR_CAUSE          (7<<6)
+  82              	#define DCSR_DEBUGINT       (1<<5)
+  83              	#define DCSR_HALT           (1<<3)
+  84              	#define DCSR_STEP           (1<<2)
+  85              	#define DCSR_PRV            (3<<0)
+  86              	
+  87              	#define DCSR_CAUSE_NONE     0
+  88              	#define DCSR_CAUSE_SWBP     1
+  89              	#define DCSR_CAUSE_HWBP     2
+  90              	#define DCSR_CAUSE_DEBUGINT 3
+  91              	#define DCSR_CAUSE_STEP     4
+  92              	#define DCSR_CAUSE_HALT     5
+  93              	
+  94              	#define MCONTROL_TYPE(xlen)    (0xfULL<<((xlen)-4))
+  95              	#define MCONTROL_DMODE(xlen)   (1ULL<<((xlen)-5))
+  96              	#define MCONTROL_MASKMAX(xlen) (0x3fULL<<((xlen)-11))
+  97              	
+  98              	#define MCONTROL_SELECT     (1<<19)
+  99              	#define MCONTROL_TIMING     (1<<18)
+ 100              	#define MCONTROL_ACTION     (0x3f<<12)
+ 101              	#define MCONTROL_CHAIN      (1<<11)
+ 102              	#define MCONTROL_MATCH      (0xf<<7)
+ 103              	#define MCONTROL_M          (1<<6)
+ 104              	#define MCONTROL_H          (1<<5)
+ 105              	#define MCONTROL_S          (1<<4)
+ 106              	#define MCONTROL_U          (1<<3)
+ 107              	#define MCONTROL_EXECUTE    (1<<2)
+ 108              	#define MCONTROL_STORE      (1<<1)
+ 109              	#define MCONTROL_LOAD       (1<<0)
+ 110              	
+ 111              	#define MCONTROL_TYPE_NONE      0
+ 112              	#define MCONTROL_TYPE_MATCH     2
+ 113              	
+ 114              	#define MCONTROL_ACTION_DEBUG_EXCEPTION   0
+ 115              	#define MCONTROL_ACTION_DEBUG_MODE        1
+ 116              	#define MCONTROL_ACTION_TRACE_START       2
+ 117              	#define MCONTROL_ACTION_TRACE_STOP        3
+ 118              	#define MCONTROL_ACTION_TRACE_EMIT        4
+ 119              	
+ 120              	#define MCONTROL_MATCH_EQUAL     0
+ 121              	#define MCONTROL_MATCH_NAPOT     1
+ 122              	#define MCONTROL_MATCH_GE        2
+ 123              	#define MCONTROL_MATCH_LT        3
+ 124              	#define MCONTROL_MATCH_MASK_LOW  4
+ 125              	#define MCONTROL_MATCH_MASK_HIGH 5
+ 126              	
+ 127              	#define MIP_SSIP            (1 << IRQ_S_SOFT)
+ 128              	#define MIP_HSIP            (1 << IRQ_H_SOFT)
+ 129              	#define MIP_MSIP            (1 << IRQ_M_SOFT)
+ 130              	#define MIP_STIP            (1 << IRQ_S_TIMER)
+ 131              	#define MIP_HTIP            (1 << IRQ_H_TIMER)
+ 132              	#define MIP_MTIP            (1 << IRQ_M_TIMER)
+ 133              	#define MIP_SEIP            (1 << IRQ_S_EXT)
+ 134              	#define MIP_HEIP            (1 << IRQ_H_EXT)
+ 135              	#define MIP_MEIP            (1 << IRQ_M_EXT)
+ 136              	
+ 137              	#define MIE_SSIE            MIP_SSIP
+ 138              	#define MIE_HSIE            MIP_HSIP
+ 139              	#define MIE_MSIE            MIP_MSIP
+ 140              	#define MIE_STIE            MIP_STIP
+ 141              	#define MIE_HTIE            MIP_HTIP
+ 142              	#define MIE_MTIE            MIP_MTIP
+ 143              	#define MIE_SEIE            MIP_SEIP
+ 144              	#define MIE_HEIE            MIP_HEIP
+ 145              	#define MIE_MEIE            MIP_MEIP
+ 146              	
+ 147              	/* === P-ext CSR bit mask === */
+ 148              	
+ 149              	#define UCODE_OV            (0x1)
+ 150              	
+ 151              	/* === Nuclei custom CSR bit mask === */
+ 152              	
+ 153              	#define WFE_WFE                     (0x1)
+ 154              	#define TXEVT_TXEVT                 (0x1)
+ 155              	#define SLEEPVALUE_SLEEPVALUE       (0x1)
+ 156              	
+ 157              	#define MCOUNTINHIBIT_IR            (1<<2)
+ 158              	#define MCOUNTINHIBIT_CY            (1<<0)
+ 159              	
+ 160              	#define MILM_CTL_ILM_BPA            (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 161              	#define MILM_CTL_ILM_RWECC          (1<<3)
+ 162              	#define MILM_CTL_ILM_ECC_EXCP_EN    (1<<2)
+ 163              	#define MILM_CTL_ILM_ECC_EN         (1<<1)
+ 164              	#define MILM_CTL_ILM_EN             (1<<0)
+ 165              	
+ 166              	#define MDLM_CTL_DLM_BPA            (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 167              	#define MDLM_CTL_DLM_RWECC          (1<<3)
+ 168              	#define MDLM_CTL_DLM_ECC_EXCP_EN    (1<<2)
+ 169              	#define MDLM_CTL_DLM_ECC_EN         (1<<1)
+ 170              	#define MDLM_CTL_DLM_EN             (1<<0)
+ 171              	
+ 172              	#define MSUBM_PTYP                  (0x3<<8)
+ 173              	#define MSUBM_TYP                   (0x3<<6)
+ 174              	
+ 175              	#define MDCAUSE_MDCAUSE             (0x3)
+ 176              	
+ 177              	#define MMISC_CTL_NMI_CAUSE_FFF     (1<<9)
+ 178              	#define MMISC_CTL_MISALIGN          (1<<6)
+ 179              	#define MMISC_CTL_BPU               (1<<3)
+ 180              	
+ 181              	#define MCACHE_CTL_IC_EN            (1<<0)
+ 182              	#define MCACHE_CTL_IC_SCPD_MOD      (1<<1)
+ 183              	#define MCACHE_CTL_IC_ECC_EN        (1<<2)
+ 184              	#define MCACHE_CTL_IC_ECC_EXCP_EN   (1<<3)
+ 185              	#define MCACHE_CTL_IC_RWTECC        (1<<4)
+ 186              	#define MCACHE_CTL_IC_RWDECC        (1<<5)
+ 187              	#define MCACHE_CTL_DC_EN            (1<<16)
+ 188              	#define MCACHE_CTL_DC_ECC_EN        (1<<17)
+ 189              	#define MCACHE_CTL_DC_ECC_EXCP_EN   (1<<18)
+ 190              	#define MCACHE_CTL_DC_RWTECC        (1<<19)
+ 191              	#define MCACHE_CTL_DC_RWDECC        (1<<20)
+ 192              	
+ 193              	#define MTVT2_MTVT2EN               (1<<0)
+ 194              	#define MTVT2_COMMON_CODE_ENTRY     (((1ULL<<((__riscv_xlen)-2))-1)<<2)
+ 195              	
+ 196              	#define MCFG_INFO_TEE               (1<<0)
+ 197              	#define MCFG_INFO_ECC               (1<<1)
+ 198              	#define MCFG_INFO_CLIC              (1<<2)
+ 199              	#define MCFG_INFO_PLIC              (1<<3)
+ 200              	#define MCFG_INFO_FIO               (1<<4)
+ 201              	#define MCFG_INFO_PPI               (1<<5)
+ 202              	#define MCFG_INFO_NICE              (1<<6)
+ 203              	#define MCFG_INFO_ILM               (1<<7)
+ 204              	#define MCFG_INFO_DLM               (1<<8)
+ 205              	#define MCFG_INFO_ICACHE            (1<<9)
+ 206              	#define MCFG_INFO_DCACHE            (1<<10)
+ 207              	
+ 208              	#define MICFG_IC_SET                (0xF<<0)
+ 209              	#define MICFG_IC_WAY                (0x7<<4)
+ 210              	#define MICFG_IC_LSIZE              (0x7<<7)
+ 211              	#define MICFG_IC_ECC                (0x1<<10)
+ 212              	#define MICFG_ILM_SIZE              (0x1F<<16)
+ 213              	#define MICFG_ILM_XONLY             (0x1<<21)
+ 214              	#define MICFG_ILM_ECC               (0x1<<22)
+ 215              	
+ 216              	#define MDCFG_DC_SET                (0xF<<0)
+ 217              	#define MDCFG_DC_WAY                (0x7<<4)
+ 218              	#define MDCFG_DC_LSIZE              (0x7<<7)
+ 219              	#define MDCFG_DC_ECC                (0x1<<10)
+ 220              	#define MDCFG_DLM_SIZE              (0x1F<<16)
+ 221              	#define MDCFG_DLM_ECC               (0x1<<21)
+ 222              	
+ 223              	#define MPPICFG_INFO_PPI_SIZE       (0x1F<<1)
+ 224              	#define MPPICFG_INFO_PPI_BPA        (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 225              	
+ 226              	#define MFIOCFG_INFO_FIO_SIZE       (0x1F<<1)
+ 227              	#define MFIOCFG_INFO_FIO_BPA        (((1ULL<<((__riscv_xlen)-10))-1)<<10)
+ 228              	
+ 229              	#define MECC_LOCK_ECC_LOCK          (0x1)
+ 230              	
+ 231              	#define MECC_CODE_CODE              (0x1FF)
+ 232              	#define MECC_CODE_RAMID             (0x1F<<16)
+ 233              	#define MECC_CODE_SRAMID            (0x1F<<24)
+ 234              	
+ 235              	#define CCM_SUEN_SUEN               (0x1<<0)
+ 236              	#define CCM_DATA_DATA               (0x7<<0)
+ 237              	#define CCM_COMMAND_COMMAND         (0x1F<<0)
+ 238              	
+ 239              	#define SIP_SSIP MIP_SSIP
+ 240              	#define SIP_STIP MIP_STIP
+ 241              	
+ 242              	#define PRV_U 0
+ 243              	#define PRV_S 1
+ 244              	#define PRV_H 2
+ 245              	#define PRV_M 3
+ 246              	
+ 247              	#define VM_MBARE 0
+ 248              	#define VM_MBB   1
+ 249              	#define VM_MBBID 2
+ 250              	#define VM_SV32  8
+ 251              	#define VM_SV39  9
+ 252              	#define VM_SV48  10
+ 253              	
+ 254              	#define IRQ_S_SOFT   1
+ 255              	#define IRQ_H_SOFT   2
+ 256              	#define IRQ_M_SOFT   3
+ 257              	#define IRQ_S_TIMER  5
+ 258              	#define IRQ_H_TIMER  6
+ 259              	#define IRQ_M_TIMER  7
+ 260              	#define IRQ_S_EXT    9
+ 261              	#define IRQ_H_EXT    10
+ 262              	#define IRQ_M_EXT    11
+ 263              	#define IRQ_COP      12
+ 264              	#define IRQ_HOST     13
+ 265              	
+ 266              	
+ 267              	/* === FPU FRM Rounding Mode === */
+ 268              	/** FPU Round to Nearest, ties to Even*/
+ 269              	#define FRM_RNDMODE_RNE     0x0
+ 270              	/** FPU Round Towards Zero */
+ 271              	#define FRM_RNDMODE_RTZ     0x1
+ 272              	/** FPU Round Down (towards -inf) */
+ 273              	#define FRM_RNDMODE_RDN     0x2
+ 274              	/** FPU Round Up (towards +inf) */
+ 275              	#define FRM_RNDMODE_RUP     0x3
+ 276              	/** FPU Round to nearest, ties to Max Magnitude */
+ 277              	#define FRM_RNDMODE_RMM     0x4
+ 278              	/**
+ 279              	 * In instruction's rm, selects dynamic rounding mode.
+ 280              	 * In Rounding Mode register, Invalid */
+ 281              	#define FRM_RNDMODE_DYN     0x7
+ 282              	
+ 283              	/* === FPU FFLAGS Accrued Exceptions === */
+ 284              	/** FPU Inexact */
+ 285              	#define FFLAGS_AE_NX        (1<<0)
+ 286              	/** FPU Underflow */
+ 287              	#define FFLAGS_AE_UF        (1<<1)
+ 288              	/** FPU Overflow */
+ 289              	#define FFLAGS_AE_OF        (1<<2)
+ 290              	/** FPU Divide by Zero */
+ 291              	#define FFLAGS_AE_DZ        (1<<3)
+ 292              	/** FPU Invalid Operation */
+ 293              	#define FFLAGS_AE_NV        (1<<4)
+ 294              	
+ 295              	/** Floating Point Register f0-f31, eg. f0 -> FREG(0) */
+ 296              	#define FREG(idx)           f##idx
+ 297              	
+ 298              	
+ 299              	/* === PMP CFG Bits === */
+ 300              	#define PMP_R                0x01
+ 301              	#define PMP_W                0x02
+ 302              	#define PMP_X                0x04
+ 303              	#define PMP_A                0x18
+ 304              	#define PMP_A_TOR            0x08
+ 305              	#define PMP_A_NA4            0x10
+ 306              	#define PMP_A_NAPOT          0x18
+ 307              	#define PMP_L                0x80
+ 308              	
+ 309              	#define PMP_SHIFT            2
+ 310              	#define PMP_COUNT            16
+ 311              	
+ 312              	// page table entry (PTE) fields
+ 313              	#define PTE_V     0x001 // Valid
+ 314              	#define PTE_R     0x002 // Read
+ 315              	#define PTE_W     0x004 // Write
+ 316              	#define PTE_X     0x008 // Execute
+ 317              	#define PTE_U     0x010 // User
+ 318              	#define PTE_G     0x020 // Global
+ 319              	#define PTE_A     0x040 // Accessed
+ 320              	#define PTE_D     0x080 // Dirty
+ 321              	#define PTE_SOFT  0x300 // Reserved for Software
+ 322              	
+ 323              	#define PTE_PPN_SHIFT 10
+ 324              	
+ 325              	#define PTE_TABLE(PTE) (((PTE) & (PTE_V | PTE_R | PTE_W | PTE_X)) == PTE_V)
+ 326              	
+ 327              	#ifdef __riscv
+ 328              	
+ 329              	#ifdef __riscv64
+ 330              	# define MSTATUS_SD MSTATUS64_SD
+ 331              	# define SSTATUS_SD SSTATUS64_SD
+ 332              	# define RISCV_PGLEVEL_BITS 9
+ 333              	#else
+ 334              	# define MSTATUS_SD MSTATUS32_SD
+ 335              	# define SSTATUS_SD SSTATUS32_SD
+ 336              	# define RISCV_PGLEVEL_BITS 10
+ 337              	#endif /* __riscv64 */
+ 338              	
+ 339              	#define RISCV_PGSHIFT 12
+ 340              	#define RISCV_PGSIZE (1 << RISCV_PGSHIFT)
+ 341              	
+ 342              	#endif /* __riscv */
+ 343              	
+ 344              	/**
+ 345              	 * \defgroup NMSIS_Core_CSR_Registers    Core CSR Registers
+ 346              	 * \ingroup  NMSIS_Core
+ 347              	 * \brief    NMSIS Core CSR Register Definitions
+ 348              	 * \details
+ 349              	 *
+ 350              	 * The following macros are used for CSR Register Defintions.
+ 351              	 *   @{
+ 352              	 */
+ 353              	/* === Standard RISC-V CSR Registers === */
+ 354              	#define CSR_USTATUS 0x0
+ 355              	#define CSR_FFLAGS 0x1
+ 356              	#define CSR_FRM 0x2
+ 357              	#define CSR_FCSR 0x3
+ 358              	#define CSR_CYCLE 0xc00
+ 359              	#define CSR_TIME 0xc01
+ 360              	#define CSR_INSTRET 0xc02
+ 361              	#define CSR_HPMCOUNTER3 0xc03
+ 362              	#define CSR_HPMCOUNTER4 0xc04
+ 363              	#define CSR_HPMCOUNTER5 0xc05
+ 364              	#define CSR_HPMCOUNTER6 0xc06
+ 365              	#define CSR_HPMCOUNTER7 0xc07
+ 366              	#define CSR_HPMCOUNTER8 0xc08
+ 367              	#define CSR_HPMCOUNTER9 0xc09
+ 368              	#define CSR_HPMCOUNTER10 0xc0a
+ 369              	#define CSR_HPMCOUNTER11 0xc0b
+ 370              	#define CSR_HPMCOUNTER12 0xc0c
+ 371              	#define CSR_HPMCOUNTER13 0xc0d
+ 372              	#define CSR_HPMCOUNTER14 0xc0e
+ 373              	#define CSR_HPMCOUNTER15 0xc0f
+ 374              	#define CSR_HPMCOUNTER16 0xc10
+ 375              	#define CSR_HPMCOUNTER17 0xc11
+ 376              	#define CSR_HPMCOUNTER18 0xc12
+ 377              	#define CSR_HPMCOUNTER19 0xc13
+ 378              	#define CSR_HPMCOUNTER20 0xc14
+ 379              	#define CSR_HPMCOUNTER21 0xc15
+ 380              	#define CSR_HPMCOUNTER22 0xc16
+ 381              	#define CSR_HPMCOUNTER23 0xc17
+ 382              	#define CSR_HPMCOUNTER24 0xc18
+ 383              	#define CSR_HPMCOUNTER25 0xc19
+ 384              	#define CSR_HPMCOUNTER26 0xc1a
+ 385              	#define CSR_HPMCOUNTER27 0xc1b
+ 386              	#define CSR_HPMCOUNTER28 0xc1c
+ 387              	#define CSR_HPMCOUNTER29 0xc1d
+ 388              	#define CSR_HPMCOUNTER30 0xc1e
+ 389              	#define CSR_HPMCOUNTER31 0xc1f
+ 390              	#define CSR_SSTATUS 0x100
+ 391              	#define CSR_SIE 0x104
+ 392              	#define CSR_STVEC 0x105
+ 393              	#define CSR_SSCRATCH 0x140
+ 394              	#define CSR_SEPC 0x141
+ 395              	#define CSR_SCAUSE 0x142
+ 396              	#define CSR_SBADADDR 0x143
+ 397              	#define CSR_SIP 0x144
+ 398              	#define CSR_SPTBR 0x180
+ 399              	#define CSR_MSTATUS 0x300
+ 400              	#define CSR_MISA 0x301
+ 401              	#define CSR_MEDELEG 0x302
+ 402              	#define CSR_MIDELEG 0x303
+ 403              	#define CSR_MIE 0x304
+ 404              	#define CSR_MTVEC 0x305
+ 405              	#define CSR_MCOUNTEREN 0x306
+ 406              	#define CSR_MSCRATCH 0x340
+ 407              	#define CSR_MEPC 0x341
+ 408              	#define CSR_MCAUSE 0x342
+ 409              	#define CSR_MBADADDR 0x343
+ 410              	#define CSR_MTVAL 0x343
+ 411              	#define CSR_MIP 0x344
+ 412              	#define CSR_PMPCFG0 0x3a0
+ 413              	#define CSR_PMPCFG1 0x3a1
+ 414              	#define CSR_PMPCFG2 0x3a2
+ 415              	#define CSR_PMPCFG3 0x3a3
+ 416              	#define CSR_PMPADDR0 0x3b0
+ 417              	#define CSR_PMPADDR1 0x3b1
+ 418              	#define CSR_PMPADDR2 0x3b2
+ 419              	#define CSR_PMPADDR3 0x3b3
+ 420              	#define CSR_PMPADDR4 0x3b4
+ 421              	#define CSR_PMPADDR5 0x3b5
+ 422              	#define CSR_PMPADDR6 0x3b6
+ 423              	#define CSR_PMPADDR7 0x3b7
+ 424              	#define CSR_PMPADDR8 0x3b8
+ 425              	#define CSR_PMPADDR9 0x3b9
+ 426              	#define CSR_PMPADDR10 0x3ba
+ 427              	#define CSR_PMPADDR11 0x3bb
+ 428              	#define CSR_PMPADDR12 0x3bc
+ 429              	#define CSR_PMPADDR13 0x3bd
+ 430              	#define CSR_PMPADDR14 0x3be
+ 431              	#define CSR_PMPADDR15 0x3bf
+ 432              	#define CSR_TSELECT 0x7a0
+ 433              	#define CSR_TDATA1 0x7a1
+ 434              	#define CSR_TDATA2 0x7a2
+ 435              	#define CSR_TDATA3 0x7a3
+ 436              	#define CSR_DCSR 0x7b0
+ 437              	#define CSR_DPC 0x7b1
+ 438              	#define CSR_DSCRATCH 0x7b2
+ 439              	#define CSR_MCYCLE 0xb00
+ 440              	#define CSR_MINSTRET 0xb02
+ 441              	#define CSR_MHPMCOUNTER3 0xb03
+ 442              	#define CSR_MHPMCOUNTER4 0xb04
+ 443              	#define CSR_MHPMCOUNTER5 0xb05
+ 444              	#define CSR_MHPMCOUNTER6 0xb06
+ 445              	#define CSR_MHPMCOUNTER7 0xb07
+ 446              	#define CSR_MHPMCOUNTER8 0xb08
+ 447              	#define CSR_MHPMCOUNTER9 0xb09
+ 448              	#define CSR_MHPMCOUNTER10 0xb0a
+ 449              	#define CSR_MHPMCOUNTER11 0xb0b
+ 450              	#define CSR_MHPMCOUNTER12 0xb0c
+ 451              	#define CSR_MHPMCOUNTER13 0xb0d
+ 452              	#define CSR_MHPMCOUNTER14 0xb0e
+ 453              	#define CSR_MHPMCOUNTER15 0xb0f
+ 454              	#define CSR_MHPMCOUNTER16 0xb10
+ 455              	#define CSR_MHPMCOUNTER17 0xb11
+ 456              	#define CSR_MHPMCOUNTER18 0xb12
+ 457              	#define CSR_MHPMCOUNTER19 0xb13
+ 458              	#define CSR_MHPMCOUNTER20 0xb14
+ 459              	#define CSR_MHPMCOUNTER21 0xb15
+ 460              	#define CSR_MHPMCOUNTER22 0xb16
+ 461              	#define CSR_MHPMCOUNTER23 0xb17
+ 462              	#define CSR_MHPMCOUNTER24 0xb18
+ 463              	#define CSR_MHPMCOUNTER25 0xb19
+ 464              	#define CSR_MHPMCOUNTER26 0xb1a
+ 465              	#define CSR_MHPMCOUNTER27 0xb1b
+ 466              	#define CSR_MHPMCOUNTER28 0xb1c
+ 467              	#define CSR_MHPMCOUNTER29 0xb1d
+ 468              	#define CSR_MHPMCOUNTER30 0xb1e
+ 469              	#define CSR_MHPMCOUNTER31 0xb1f
+ 470              	#define CSR_MUCOUNTEREN 0x320
+ 471              	#define CSR_MSCOUNTEREN 0x321
+ 472              	#define CSR_MHPMEVENT3 0x323
+ 473              	#define CSR_MHPMEVENT4 0x324
+ 474              	#define CSR_MHPMEVENT5 0x325
+ 475              	#define CSR_MHPMEVENT6 0x326
+ 476              	#define CSR_MHPMEVENT7 0x327
+ 477              	#define CSR_MHPMEVENT8 0x328
+ 478              	#define CSR_MHPMEVENT9 0x329
+ 479              	#define CSR_MHPMEVENT10 0x32a
+ 480              	#define CSR_MHPMEVENT11 0x32b
+ 481              	#define CSR_MHPMEVENT12 0x32c
+ 482              	#define CSR_MHPMEVENT13 0x32d
+ 483              	#define CSR_MHPMEVENT14 0x32e
+ 484              	#define CSR_MHPMEVENT15 0x32f
+ 485              	#define CSR_MHPMEVENT16 0x330
+ 486              	#define CSR_MHPMEVENT17 0x331
+ 487              	#define CSR_MHPMEVENT18 0x332
+ 488              	#define CSR_MHPMEVENT19 0x333
+ 489              	#define CSR_MHPMEVENT20 0x334
+ 490              	#define CSR_MHPMEVENT21 0x335
+ 491              	#define CSR_MHPMEVENT22 0x336
+ 492              	#define CSR_MHPMEVENT23 0x337
+ 493              	#define CSR_MHPMEVENT24 0x338
+ 494              	#define CSR_MHPMEVENT25 0x339
+ 495              	#define CSR_MHPMEVENT26 0x33a
+ 496              	#define CSR_MHPMEVENT27 0x33b
+ 497              	#define CSR_MHPMEVENT28 0x33c
+ 498              	#define CSR_MHPMEVENT29 0x33d
+ 499              	#define CSR_MHPMEVENT30 0x33e
+ 500              	#define CSR_MHPMEVENT31 0x33f
+ 501              	#define CSR_MVENDORID 0xf11
+ 502              	#define CSR_MARCHID 0xf12
+ 503              	#define CSR_MIMPID 0xf13
+ 504              	#define CSR_MHARTID 0xf14
+ 505              	#define CSR_CYCLEH 0xc80
+ 506              	#define CSR_TIMEH 0xc81
+ 507              	#define CSR_INSTRETH 0xc82
+ 508              	#define CSR_HPMCOUNTER3H 0xc83
+ 509              	#define CSR_HPMCOUNTER4H 0xc84
+ 510              	#define CSR_HPMCOUNTER5H 0xc85
+ 511              	#define CSR_HPMCOUNTER6H 0xc86
+ 512              	#define CSR_HPMCOUNTER7H 0xc87
+ 513              	#define CSR_HPMCOUNTER8H 0xc88
+ 514              	#define CSR_HPMCOUNTER9H 0xc89
+ 515              	#define CSR_HPMCOUNTER10H 0xc8a
+ 516              	#define CSR_HPMCOUNTER11H 0xc8b
+ 517              	#define CSR_HPMCOUNTER12H 0xc8c
+ 518              	#define CSR_HPMCOUNTER13H 0xc8d
+ 519              	#define CSR_HPMCOUNTER14H 0xc8e
+ 520              	#define CSR_HPMCOUNTER15H 0xc8f
+ 521              	#define CSR_HPMCOUNTER16H 0xc90
+ 522              	#define CSR_HPMCOUNTER17H 0xc91
+ 523              	#define CSR_HPMCOUNTER18H 0xc92
+ 524              	#define CSR_HPMCOUNTER19H 0xc93
+ 525              	#define CSR_HPMCOUNTER20H 0xc94
+ 526              	#define CSR_HPMCOUNTER21H 0xc95
+ 527              	#define CSR_HPMCOUNTER22H 0xc96
+ 528              	#define CSR_HPMCOUNTER23H 0xc97
+ 529              	#define CSR_HPMCOUNTER24H 0xc98
+ 530              	#define CSR_HPMCOUNTER25H 0xc99
+ 531              	#define CSR_HPMCOUNTER26H 0xc9a
+ 532              	#define CSR_HPMCOUNTER27H 0xc9b
+ 533              	#define CSR_HPMCOUNTER28H 0xc9c
+ 534              	#define CSR_HPMCOUNTER29H 0xc9d
+ 535              	#define CSR_HPMCOUNTER30H 0xc9e
+ 536              	#define CSR_HPMCOUNTER31H 0xc9f
+ 537              	#define CSR_MCYCLEH 0xb80
+ 538              	#define CSR_MINSTRETH 0xb82
+ 539              	#define CSR_MHPMCOUNTER3H 0xb83
+ 540              	#define CSR_MHPMCOUNTER4H 0xb84
+ 541              	#define CSR_MHPMCOUNTER5H 0xb85
+ 542              	#define CSR_MHPMCOUNTER6H 0xb86
+ 543              	#define CSR_MHPMCOUNTER7H 0xb87
+ 544              	#define CSR_MHPMCOUNTER8H 0xb88
+ 545              	#define CSR_MHPMCOUNTER9H 0xb89
+ 546              	#define CSR_MHPMCOUNTER10H 0xb8a
+ 547              	#define CSR_MHPMCOUNTER11H 0xb8b
+ 548              	#define CSR_MHPMCOUNTER12H 0xb8c
+ 549              	#define CSR_MHPMCOUNTER13H 0xb8d
+ 550              	#define CSR_MHPMCOUNTER14H 0xb8e
+ 551              	#define CSR_MHPMCOUNTER15H 0xb8f
+ 552              	#define CSR_MHPMCOUNTER16H 0xb90
+ 553              	#define CSR_MHPMCOUNTER17H 0xb91
+ 554              	#define CSR_MHPMCOUNTER18H 0xb92
+ 555              	#define CSR_MHPMCOUNTER19H 0xb93
+ 556              	#define CSR_MHPMCOUNTER20H 0xb94
+ 557              	#define CSR_MHPMCOUNTER21H 0xb95
+ 558              	#define CSR_MHPMCOUNTER22H 0xb96
+ 559              	#define CSR_MHPMCOUNTER23H 0xb97
+ 560              	#define CSR_MHPMCOUNTER24H 0xb98
+ 561              	#define CSR_MHPMCOUNTER25H 0xb99
+ 562              	#define CSR_MHPMCOUNTER26H 0xb9a
+ 563              	#define CSR_MHPMCOUNTER27H 0xb9b
+ 564              	#define CSR_MHPMCOUNTER28H 0xb9c
+ 565              	#define CSR_MHPMCOUNTER29H 0xb9d
+ 566              	#define CSR_MHPMCOUNTER30H 0xb9e
+ 567              	#define CSR_MHPMCOUNTER31H 0xb9f
+ 568              	
+ 569              	/* === TEE CSR Registers === */
+ 570              	#define CSR_SPMPCFG0            0x1A0
+ 571              	#define CSR_SPMPCFG1            0x1A1
+ 572              	#define CSR_SPMPCFG2            0x1A2
+ 573              	#define CSR_SPMPCFG3            0x1A3
+ 574              	#define CSR_SPMPADDR0           0x1B0
+ 575              	#define CSR_SPMPADDR1           0x1B1
+ 576              	#define CSR_SPMPADDR2           0x1B2
+ 577              	#define CSR_SPMPADDR3           0x1B3
+ 578              	#define CSR_SPMPADDR4           0x1B4
+ 579              	#define CSR_SPMPADDR5           0x1B5
+ 580              	#define CSR_SPMPADDR6           0x1B6
+ 581              	#define CSR_SPMPADDR7           0x1B7
+ 582              	#define CSR_SPMPADDR8           0x1B8
+ 583              	#define CSR_SPMPADDR9           0x1B9
+ 584              	#define CSR_SPMPADDR10          0x1BA
+ 585              	#define CSR_SPMPADDR11          0x1BB
+ 586              	#define CSR_SPMPADDR12          0x1BC
+ 587              	#define CSR_SPMPADDR13          0x1BD
+ 588              	#define CSR_SPMPADDR14          0x1BE
+ 589              	#define CSR_SPMPADDR15          0x1BF
+ 590              	
+ 591              	#define CSR_JALSNXTI            0x947
+ 592              	#define CSR_STVT2               0x948
+ 593              	#define CSR_PUSHSCAUSE          0x949
+ 594              	#define CSR_PUSHSEPC            0x94A
+ 595              	
+ 596              	
+ 597              	/* === CLIC CSR Registers === */
+ 598              	#define CSR_MTVT                0x307
+ 599              	#define CSR_MNXTI               0x345
+ 600              	#define CSR_MINTSTATUS          0x346
+ 601              	#define CSR_MSCRATCHCSW         0x348
+ 602              	#define CSR_MSCRATCHCSWL        0x349
+ 603              	#define CSR_MCLICBASE           0x350
+ 604              	
+ 605              	/* === P-Extension Registers === */
+ 606              	#define CSR_UCODE               0x801
+ 607              	
+ 608              	/* === Nuclei custom CSR Registers === */
+ 609              	#define CSR_MCOUNTINHIBIT       0x320
+ 610              	#define CSR_MILM_CTL            0x7C0
+ 611              	#define CSR_MDLM_CTL            0x7C1
+ 612              	#define CSR_MECC_CODE           0x7C2
+ 613              	#define CSR_MNVEC               0x7C3
+ 614              	#define CSR_MSUBM               0x7C4
+ 615              	#define CSR_MDCAUSE             0x7C9
+ 616              	#define CSR_MCACHE_CTL          0x7CA
+ 617              	#define CSR_MMISC_CTL           0x7D0
+ 618              	#define CSR_MSAVESTATUS         0x7D6
+ 619              	#define CSR_MSAVEEPC1           0x7D7
+ 620              	#define CSR_MSAVECAUSE1         0x7D8
+ 621              	#define CSR_MSAVEEPC2           0x7D9
+ 622              	#define CSR_MSAVECAUSE2         0x7DA
+ 623              	#define CSR_MSAVEDCAUSE1        0x7DB
+ 624              	#define CSR_MSAVEDCAUSE2        0x7DC
+ 625              	#define CSR_MTLB_CTL            0x7DD
+ 626              	#define CSR_MECC_LOCK           0x7DE
+ 627              	#define CSR_MFP16MODE           0x7E2
+ 628              	#define CSR_LSTEPFORC           0x7E9
+ 629              	#define CSR_PUSHMSUBM           0x7EB
+ 630              	#define CSR_MTVT2               0x7EC
+ 631              	#define CSR_JALMNXTI            0x7ED
+ 632              	#define CSR_PUSHMCAUSE          0x7EE
+ 633              	#define CSR_PUSHMEPC            0x7EF
+ 634              	#define CSR_MPPICFG_INFO        0x7F0
+ 635              	#define CSR_MFIOCFG_INFO        0x7F1
+ 636              	#define CSR_MSMPCFG_INFO        0x7F7
+ 637              	#define CSR_SLEEPVALUE          0x811
+ 638              	#define CSR_TXEVT               0x812
+ 639              	#define CSR_WFE                 0x810
+ 640              	#define CSR_MICFG_INFO          0xFC0
+ 641              	#define CSR_MDCFG_INFO          0xFC1
+ 642              	#define CSR_MCFG_INFO           0xFC2
+ 643              	#define CSR_MTLBCFG_INFO        0xFC3
+ 644              	
+ 645              	/* === Nuclei CCM Registers === */
+ 646              	#define CSR_CCM_MBEGINADDR      0x7CB
+ 647              	#define CSR_CCM_MCOMMAND        0x7CC
+ 648              	#define CSR_CCM_MDATA           0x7CD
+ 649              	#define CSR_CCM_SUEN            0x7CE
+ 650              	#define CSR_CCM_SBEGINADDR      0x5CB
+ 651              	#define CSR_CCM_SCOMMAND        0x5CC
+ 652              	#define CSR_CCM_SDATA           0x5CD
+ 653              	#define CSR_CCM_UBEGINADDR      0x4CB
+ 654              	#define CSR_CCM_UCOMMAND        0x4CC
+ 655              	#define CSR_CCM_UDATA           0x4CD
+ 656              	#define CSR_CCM_FPIPE           0x4CF
+ 657              	
+ 658              	/** @} */ /** End of Doxygen Group NMSIS_Core_CSR_Registers **/
+ 659              	
+ 660              	/* Exception Code in MCAUSE CSR */
+ 661              	#define CAUSE_MISALIGNED_FETCH 0x0
+ 662              	#define CAUSE_FAULT_FETCH 0x1
+ 663              	#define CAUSE_ILLEGAL_INSTRUCTION 0x2
+ 664              	#define CAUSE_BREAKPOINT 0x3
+ 665              	#define CAUSE_MISALIGNED_LOAD 0x4
+ 666              	#define CAUSE_FAULT_LOAD 0x5
+ 667              	#define CAUSE_MISALIGNED_STORE 0x6
+ 668              	#define CAUSE_FAULT_STORE 0x7
+ 669              	#define CAUSE_USER_ECALL 0x8
+ 670              	#define CAUSE_SUPERVISOR_ECALL 0x9
+ 671              	#define CAUSE_HYPERVISOR_ECALL 0xa
+ 672              	#define CAUSE_MACHINE_ECALL 0xb
+ 673              	
+ 674              	/* Exception Subcode in MDCAUSE CSR */
+ 675              	#define DCAUSE_FAULT_FETCH_PMP      0x1
+ 676              	#define DCAUSE_FAULT_FETCH_INST     0x2
+ 677              	
+ 678              	#define DCAUSE_FAULT_LOAD_PMP       0x1
+ 679              	#define DCAUSE_FAULT_LOAD_INST      0x2
+ 680              	#define DCAUSE_FAULT_LOAD_NICE      0x3
+ 681              	
+ 682              	#define DCAUSE_FAULT_STORE_PMP      0x1
+ 683              	#define DCAUSE_FAULT_STORE_INST     0x2
+ 684              	
+ 685              	/** @} */ /** End of Doxygen Group NMSIS_Core_CSR_Encoding **/
+ 686              	
+ 687              	#ifdef __cplusplus
+ 688              	}
+ 689              	#endif
+ 690              	#ifdef __GNUC__
+ 691              	
+ 692              	#define read_fpu(reg) ({ unsigned long __tmp; \
+ 693              	  asm volatile ("fmv.x.w %0, " #reg : "=r"(__tmp)); \
+ 694              	  __tmp; })
+ 695              	
+ 696              	#define write_fpu(reg, val) ({ \
+ 697              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 698              	    asm volatile ("fmv.w.x " #reg ", %0" :: "i"(val)); \
+ 699              	  else \
+ 700              	    asm volatile ("fmv.w.x " #reg ", %0" :: "r"(val)); })
+ 701              	
+ 702              	
+ 703              	#define read_csr(reg) ({ unsigned long __tmp; \
+ 704              	  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+ 705              	  __tmp; })
+ 706              	
+ 707              	#define write_csr(reg, val) ({ \
+ 708              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 709              	    asm volatile ("csrw " #reg ", %0" :: "i"(val)); \
+ 710              	  else \
+ 711              	    asm volatile ("csrw " #reg ", %0" :: "r"(val)); })
+ 712              	
+ 713              	#define swap_csr(reg, val) ({ unsigned long __tmp; \
+ 714              	  if (__builtin_constant_p(val) && (unsigned long)(val) < 32) \
+ 715              	    asm volatile ("csrrw %0, " #reg ", %1" : "=r"(__tmp) : "i"(val)); \
+ 716              	  else \
+ 717              	    asm volatile ("csrrw %0, " #reg ", %1" : "=r"(__tmp) : "r"(val)); \
+ 718              	  __tmp; })
+ 719              	
+ 720              	#define set_csr(reg, bit) ({ unsigned long __tmp; \
+ 721              	  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+ 722              	    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "i"(bit)); \
+ 723              	  else \
+ 724              	    asm volatile ("csrrs %0, " #reg ", %1" : "=r"(__tmp) : "r"(bit)); \
+ 725              	  __tmp; })
+ 726              	
+ 727              	#define clear_csr(reg, bit) ({ unsigned long __tmp; \
+ 728              	  if (__builtin_constant_p(bit) && (unsigned long)(bit) < 32) \
+  23              	
+  24              	/**
+  25              	 * \brief  Global interrupt disabled
+  26              	 * \details
+  27              	 *  This function disable global interrupt.
+  28              	 * \remarks
+  29              	 *  - All the interrupt requests will be ignored by CPU.
+  30              	 */
+  31              	.macro DISABLE_MIE
+  32              	    csrc CSR_MSTATUS, MSTATUS_MIE
+  33              	.endm
+  34              	
+  35              	/**
+  36              	 * \brief  Macro for context save
+  37              	 * \details
+  38              	 * This macro save ABI defined caller saved registers in the stack.
+  39              	 * \remarks
+  40              	 * - This Macro could use to save context when you enter to interrupt
+  41              	 * or exception
+  42              	*/
+  43              	/* Save caller registers */
+  44              	.macro SAVE_CONTEXT
+  45              	    /* Allocate stack space for context saving */
+  46              	#ifndef __riscv_32e
+  47              	    addi sp, sp, -20*REGBYTES
+  48              	#else
+  49              	    addi sp, sp, -14*REGBYTES
+  50              	#endif /* __riscv_32e */
+  51              	
+  52              	    STORE x1, 0*REGBYTES(sp)
+  53              	    STORE x4, 1*REGBYTES(sp)
+  54              	    STORE x5, 2*REGBYTES(sp)
+  55              	    STORE x6, 3*REGBYTES(sp)
+  56              	    STORE x7, 4*REGBYTES(sp)
+  57              	    STORE x10, 5*REGBYTES(sp)
+  58              	    STORE x11, 6*REGBYTES(sp)
+  59              	    STORE x12, 7*REGBYTES(sp)
+  60              	    STORE x13, 8*REGBYTES(sp)
+  61              	    STORE x14, 9*REGBYTES(sp)
+  62              	    STORE x15, 10*REGBYTES(sp)
+  63              	#ifndef __riscv_32e
+  64              	    STORE x16, 14*REGBYTES(sp)
+  65              	    STORE x17, 15*REGBYTES(sp)
+  66              	    STORE x28, 16*REGBYTES(sp)
+  67              	    STORE x29, 17*REGBYTES(sp)
+  68              	    STORE x30, 18*REGBYTES(sp)
+  69              	    STORE x31, 19*REGBYTES(sp)
+  70              	#endif /* __riscv_32e */
+  71              	.endm
+  72              	
+  73              	/**
+  74              	 * \brief  Macro for restore caller registers
+  75              	 * \details
+  76              	 * This macro restore ABI defined caller saved registers from stack.
+  77              	 * \remarks
+  78              	 * - You could use this macro to restore context before you want return
+  79              	 * from interrupt or exeception
+  80              	 */
+  81              	/* Restore caller registers */
+  82              	.macro RESTORE_CONTEXT
+  83              	    LOAD x1, 0*REGBYTES(sp)
+  84              	    LOAD x4, 1*REGBYTES(sp)
+  85              	    LOAD x5, 2*REGBYTES(sp)
+  86              	    LOAD x6, 3*REGBYTES(sp)
+  87              	    LOAD x7, 4*REGBYTES(sp)
+  88              	    LOAD x10, 5*REGBYTES(sp)
+  89              	    LOAD x11, 6*REGBYTES(sp)
+  90              	    LOAD x12, 7*REGBYTES(sp)
+  91              	    LOAD x13, 8*REGBYTES(sp)
+  92              	    LOAD x14, 9*REGBYTES(sp)
+  93              	    LOAD x15, 10*REGBYTES(sp)
+  94              	#ifndef __riscv_32e
+  95              	    LOAD x16, 14*REGBYTES(sp)
+  96              	    LOAD x17, 15*REGBYTES(sp)
+  97              	    LOAD x28, 16*REGBYTES(sp)
+  98              	    LOAD x29, 17*REGBYTES(sp)
+  99              	    LOAD x30, 18*REGBYTES(sp)
+ 100              	    LOAD x31, 19*REGBYTES(sp)
+ 101              	
+ 102              	    /* De-allocate the stack space */
+ 103              	    addi sp, sp, 20*REGBYTES
+ 104              	#else
+ 105              	    /* De-allocate the stack space */
+ 106              	    addi sp, sp, 14*REGBYTES
+ 107              	#endif /* __riscv_32e */
+ 108              	
+ 109              	.endm
+ 110              	
+ 111              	/**
+ 112              	 * \brief  Macro for save necessary CSRs to stack
+ 113              	 * \details
+ 114              	 * This macro store MCAUSE, MEPC, MSUBM to stack.
+ 115              	 */
+ 116              	.macro SAVE_CSR_CONTEXT
+ 117              	    /* Store CSR mcause to stack using pushmcause */
+ 118              	    csrrwi  x0, CSR_PUSHMCAUSE, 11
+ 119              	    /* Store CSR mepc to stack using pushmepc */
+ 120              	    csrrwi  x0, CSR_PUSHMEPC, 12
+ 121              	    /* Store CSR msub to stack using pushmsub */
+ 122              	    csrrwi  x0, CSR_PUSHMSUBM, 13
+ 123              	.endm
+ 124              	
+ 125              	/**
+ 126              	 * \brief  Macro for restore necessary CSRs from stack
+ 127              	 * \details
+ 128              	 * This macro restore MSUBM, MEPC, MCAUSE from stack.
+ 129              	 */
+ 130              	.macro RESTORE_CSR_CONTEXT
+ 131              	    LOAD x5,  13*REGBYTES(sp)
+ 132              	    csrw CSR_MSUBM, x5
+ 133              	    LOAD x5,  12*REGBYTES(sp)
+ 134              	    csrw CSR_MEPC, x5
+ 135              	    LOAD x5,  11*REGBYTES(sp)
+ 136              	    csrw CSR_MCAUSE, x5
+ 137              	.endm
+ 138              	
+ 139              	/**
+ 140              	 * \brief  Exception/NMI Entry
+ 141              	 * \details
+ 142              	 * This function provide common entry functions for exception/nmi.
+ 143              	 * \remarks
+ 144              	 * This function provide a default exception/nmi entry.
+ 145              	 * ABI defined caller save register and some CSR registers
+ 146              	 * to be saved before enter interrupt handler and be restored before return.
+ 147              	 */
+ 148              	.section .text.trap
+ 149              	/* In CLIC mode, the exeception entry must be 64bytes aligned */
+ 150 0000 01001300 	.align 6
+ 150      00001300 
+ 150      00001300 
+ 150      00001300 
+ 150      00001300 
+ 151              	.global exc_entry
+ 152              	.weak exc_entry
+ 153              	exc_entry:
+ 154              	    /* Save the caller saving registers (context) */
+ 155 003e 5D7106C0 	    SAVE_CONTEXT
+ 155      12C216C4 
+ 155      1AC61EC8 
+ 155      2ACA2ECC 
+ 155      32CE36D0 
+ 156              	    /* Save the necessary CSR registers */
+ 157 0062 73D0E57E 	    SAVE_CSR_CONTEXT
+ 157      7350F67E 
+ 157      73D0B67E 
+ 158              	
+ 159              	    /*
+ 160              	     * Set the exception handler function arguments
+ 161              	     * argument 1: mcause value
+ 162              	     * argument 2: current stack point(SP) value
+ 163              	     */
+ 164 006e 73252034 	    csrr a0, mcause
+ 165 0072 8A85     	    mv a1, sp
+ 166              	    /*
+ 167              	     * TODO: Call the exception handler function
+ 168              	     * By default, the function template is provided in
+ 169              	     * handlers.c, you can adjust it as you want
+ 170              	     */
+ 171 0074 97000000 	    call core_exception_handler
+ 171      E7800000 
+ 172              	
+ 173              	    /* Restore the necessary CSR registers */
+ 174 007c D2527390 	    RESTORE_CSR_CONTEXT
+ 174      427CC252 
+ 174      73901234 
+ 174      B2527390 
+ 174      2234
+ 175              	    /* Restore the caller saving registers (context) */
+ 176 008e 82401242 	    RESTORE_CONTEXT
+ 176      A2423243 
+ 176      C2435245 
+ 176      E2457246 
+ 176      82561257 
+ 177              	
+ 178              	    /* Return to regular code */
+ 179 00b2 73002030 	    mret
+ 180              	
+ 181              	/**
+ 182              	 * \brief  Non-Vector Interrupt Entry
+ 183              	 * \details
+ 184              	 * This function provide common entry functions for handling
+ 185              	 * non-vector interrupts
+ 186              	 * \remarks
+ 187              	 * This function provide a default non-vector interrupt entry.
+ 188              	 * ABI defined caller save register and some CSR registers need
+ 189              	 * to be saved before enter interrupt handler and be restored before return.
+ 190              	 */
+ 191 00b6 00000000 	.section      .text.irq
+ 191      00000000 
+ 191      0000
+ 192              	/* In CLIC mode, the interrupt entry must be 4bytes aligned */
+ 193 0000 0100     	.align 2
+ 194              	.global irq_entry
+ 195              	.weak irq_entry
+ 196              	/* This label will be set to MTVT2 register */
+ 197              	irq_entry:
+ 198              	    /* Save the caller saving registers (context) */
+ 199 0002 5D7106C0 	    SAVE_CONTEXT
+ 199      12C216C4 
+ 199      1AC61EC8 
+ 199      2ACA2ECC 
+ 199      32CE36D0 
+ 200              	    /* Save the necessary CSR registers */
+ 201 0026 73D0E57E 	    SAVE_CSR_CONTEXT
+ 201      7350F67E 
+ 201      73D0B67E 
+ 202              	
+ 203              	    /* This special CSR read/write operation, which is actually
+ 204              	     * claim the CLIC to find its pending highest ID, if the ID
+ 205              	     * is not 0, then automatically enable the mstatus.MIE, and
+ 206              	     * jump to its vector-entry-label, and update the link register
+ 207              	     */
+ 208 0032 F390D07E 	    csrrw ra, CSR_JALMNXTI, ra
+ 209              	
+ 210              	    /* Critical section with interrupts disabled */
+ 211 0036 73700430 	    DISABLE_MIE
+ 212              	
+ 213              	    /* Restore the necessary CSR registers */
+ 214 003a D2527390 	    RESTORE_CSR_CONTEXT
+ 214      427CC252 
+ 214      73901234 
+ 214      B2527390 
+ 214      2234
+ 215              	    /* Restore the caller saving registers (context) */
+ 216 004c 82401242 	    RESTORE_CONTEXT
+ 216      A2423243 
+ 216      C2435245 
+ 216      E2457246 
+ 216      82561257 
+ 217              	
+ 218              	    /* Return to regular code */
+ 219 0070 73002030 	    mret
+ 220              	
+ 221              	/* Default Handler for Exceptions / Interrupts */
+ 222              	.global default_intexc_handler
+ 223              	.weak default_intexc_handler
+ 224              	Undef_Handler:
+ 225              	default_intexc_handler:
+ 226              	1:
+ 227 0074 01A00000 	    j 1b
+DEFINED SYMBOLS
+../Firmware/RISCV/env_Eclipse/entry.S:153    .text.trap:000000000000003e exc_entry
+../Firmware/RISCV/env_Eclipse/entry.S:155    .text.trap:000000000000003e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:157    .text.trap:0000000000000062 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:164    .text.trap:000000000000006e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:165    .text.trap:0000000000000072 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:171    .text.trap:0000000000000074 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:174    .text.trap:000000000000007c .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:176    .text.trap:000000000000008e .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:179    .text.trap:00000000000000b2 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:197    .text.irq:0000000000000002 irq_entry
+../Firmware/RISCV/env_Eclipse/entry.S:199    .text.irq:0000000000000002 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:201    .text.irq:0000000000000026 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:208    .text.irq:0000000000000032 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:211    .text.irq:0000000000000036 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:214    .text.irq:000000000000003a .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:216    .text.irq:000000000000004c .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:219    .text.irq:0000000000000070 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:225    .text.irq:0000000000000074 default_intexc_handler
+../Firmware/RISCV/env_Eclipse/entry.S:224    .text.irq:0000000000000074 Undef_Handler
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000074 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                    .debug_ranges:0000000000000000 .L0 
+                       .text.trap:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+                        .text.irq:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                       .text.trap:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:191    .text.trap:00000000000000b6 .L0 
+                        .text.irq:0000000000000000 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:227    .text.irq:0000000000000076 .L0 
+                       .debug_str:0000000000000000 .L0 
+                       .debug_str:0000000000000026 .L0 
+                       .debug_str:0000000000000060 .L0 
+../Firmware/RISCV/env_Eclipse/entry.S:226    .text.irq:0000000000000074 .L11
+
+UNDEFINED SYMBOLS
+core_exception_handler

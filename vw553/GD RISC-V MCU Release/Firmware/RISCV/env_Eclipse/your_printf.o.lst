@@ -1,0 +1,99 @@
+   1              		.file	"your_printf.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.text.__wrap_printf,"ax",@progbits
+  10              		.align	1
+  11              		.globl	__wrap_printf
+  13              	__wrap_printf:
+  14              	.LFB0:
+  15              		.file 1 "../Firmware/RISCV/env_Eclipse/your_printf.c"
+   1:../Firmware/RISCV/env_Eclipse/your_printf.c **** /*
+   2:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+   3:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * Copyright (c) 2025, GigaDevice Semiconductor Inc.
+   4:../Firmware/RISCV/env_Eclipse/your_printf.c ****  *
+   5:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * SPDX-License-Identifier: Apache-2.0
+   6:../Firmware/RISCV/env_Eclipse/your_printf.c ****  *
+   7:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+   8:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * not use this file except in compliance with the License.
+   9:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * You may obtain a copy of the License at
+  10:../Firmware/RISCV/env_Eclipse/your_printf.c ****  *
+  11:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * www.apache.org/licenses/LICENSE-2.0
+  12:../Firmware/RISCV/env_Eclipse/your_printf.c ****  *
+  13:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * Unless required by applicable law or agreed to in writing, software
+  14:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  15:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  16:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * See the License for the specific language governing permissions and
+  17:../Firmware/RISCV/env_Eclipse/your_printf.c ****  * limitations under the License.
+  18:../Firmware/RISCV/env_Eclipse/your_printf.c ****  */
+  19:../Firmware/RISCV/env_Eclipse/your_printf.c **** 
+  20:../Firmware/RISCV/env_Eclipse/your_printf.c **** /* This file refers the RISC-V standard, some adjustments are made according to GigaDevice chips */
+  21:../Firmware/RISCV/env_Eclipse/your_printf.c **** 
+  22:../Firmware/RISCV/env_Eclipse/your_printf.c **** int __wrap_printf(const char* fmt, ...)
+  23:../Firmware/RISCV/env_Eclipse/your_printf.c **** {
+  16              		.loc 1 23 1
+  17              		.cfi_startproc
+  18 0000 3971     		addi	sp,sp,-64
+  19              		.cfi_def_cfa_offset 64
+  20 0002 22CE     		sw	s0,28(sp)
+  21              		.cfi_offset 8, -36
+  22 0004 0010     		addi	s0,sp,32
+  23              		.cfi_def_cfa 8, 32
+  24 0006 2326A4FE 		sw	a0,-20(s0)
+  25 000a 4CC0     		sw	a1,4(s0)
+  26 000c 10C4     		sw	a2,8(s0)
+  27 000e 54C4     		sw	a3,12(s0)
+  28 0010 18C8     		sw	a4,16(s0)
+  29 0012 5CC8     		sw	a5,20(s0)
+  30 0014 232C0401 		sw	a6,24(s0)
+  31 0018 232E1401 		sw	a7,28(s0)
+  24:../Firmware/RISCV/env_Eclipse/your_printf.c ****     // You can implement your own printf to reduce the code size, because the printf is really a bi
+  25:../Firmware/RISCV/env_Eclipse/your_printf.c ****     return 0;
+  32              		.loc 1 25 12
+  33 001c 8147     		li	a5,0
+  26:../Firmware/RISCV/env_Eclipse/your_printf.c **** }
+  34              		.loc 1 26 1
+  35 001e 3E85     		mv	a0,a5
+  36 0020 7244     		lw	s0,28(sp)
+  37              		.cfi_restore 8
+  38              		.cfi_def_cfa 2, 64
+  39 0022 2161     		addi	sp,sp,64
+  40              		.cfi_def_cfa_offset 0
+  41 0024 8280     		jr	ra
+  42              		.cfi_endproc
+  43              	.LFE0:
+  45              		.text
+  46              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 your_printf.c
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:13     .text.__wrap_printf:0000000000000000 __wrap_printf
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:17     .text.__wrap_printf:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:18     .text.__wrap_printf:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:19     .text.__wrap_printf:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:21     .text.__wrap_printf:0000000000000004 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:23     .text.__wrap_printf:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:33     .text.__wrap_printf:000000000000001c .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:35     .text.__wrap_printf:000000000000001e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:37     .text.__wrap_printf:0000000000000022 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:38     .text.__wrap_printf:0000000000000022 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:40     .text.__wrap_printf:0000000000000024 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:42     .text.__wrap_printf:0000000000000026 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:45     .text.__wrap_printf:0000000000000026 .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:98     .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:229    .debug_str:0000000000000000 .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:231    .debug_str:00000000000000cc .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:233    .debug_str:00000000000000f8 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:221    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:227    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:237    .debug_str:0000000000000139 .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:14     .text.__wrap_printf:0000000000000000 .LFB0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:43     .text.__wrap_printf:0000000000000026 .LFE0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:235    .debug_str:0000000000000134 .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccihhZJa.s:48     .debug_info:0000000000000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

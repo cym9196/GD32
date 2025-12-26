@@ -1,0 +1,142 @@
+   1              		.file	"sbrk.c"
+   2              		.option nopic
+   3              		.attribute arch, "rv32i2p0_m2p0_a2p0_c2p0"
+   4              		.attribute unaligned_access, 0
+   5              		.attribute stack_align, 16
+   6              		.text
+   7              	.Ltext0:
+   8              		.cfi_sections	.debug_frame
+   9              		.section	.sdata.curbrk.0,"aw"
+  10              		.align	2
+  13              	curbrk.0:
+  14 0000 00000000 		.word	_end
+  15              		.section	.text._sbrk,"ax",@progbits
+  16              		.align	1
+  17              		.globl	_sbrk
+  19              	_sbrk:
+  20              	.LFB0:
+  21              		.file 1 "../Firmware/RISCV/stubs/sbrk.c"
+   1:../Firmware/RISCV/stubs/sbrk.c **** /* See LICENSE of license details. */
+   2:../Firmware/RISCV/stubs/sbrk.c **** 
+   3:../Firmware/RISCV/stubs/sbrk.c **** #include <stddef.h>
+   4:../Firmware/RISCV/stubs/sbrk.c **** 
+   5:../Firmware/RISCV/stubs/sbrk.c **** void *_sbrk(ptrdiff_t incr)
+   6:../Firmware/RISCV/stubs/sbrk.c **** {
+  22              		.loc 1 6 1
+  23              		.cfi_startproc
+  24 0000 0111     		addi	sp,sp,-32
+  25              		.cfi_def_cfa_offset 32
+  26 0002 22CE     		sw	s0,28(sp)
+  27              		.cfi_offset 8, -4
+  28 0004 0010     		addi	s0,sp,32
+  29              		.cfi_def_cfa 8, 0
+  30 0006 2326A4FE 		sw	a0,-20(s0)
+   7:../Firmware/RISCV/stubs/sbrk.c ****   extern char _end[];
+   8:../Firmware/RISCV/stubs/sbrk.c ****   extern char _heap_end[];
+   9:../Firmware/RISCV/stubs/sbrk.c ****   static char *curbrk = _end;
+  10:../Firmware/RISCV/stubs/sbrk.c **** 
+  11:../Firmware/RISCV/stubs/sbrk.c ****   if ((curbrk + incr < _end) || (curbrk + incr > _heap_end))
+  31              		.loc 1 11 15
+  32 000a B7070000 		lui	a5,%hi(curbrk.0)
+  33 000e 03A70700 		lw	a4,%lo(curbrk.0)(a5)
+  34 0012 8327C4FE 		lw	a5,-20(s0)
+  35 0016 3E97     		add	a4,a4,a5
+  36              		.loc 1 11 6
+  37 0018 B7070000 		lui	a5,%hi(_end)
+  38 001c 93870700 		addi	a5,a5,%lo(_end)
+  39 0020 636FF700 		bltu	a4,a5,.L2
+  40              		.loc 1 11 41 discriminator 1
+  41 0024 B7070000 		lui	a5,%hi(curbrk.0)
+  42 0028 03A70700 		lw	a4,%lo(curbrk.0)(a5)
+  43 002c 8327C4FE 		lw	a5,-20(s0)
+  44 0030 3E97     		add	a4,a4,a5
+  45              		.loc 1 11 30 discriminator 1
+  46 0032 B7070000 		lui	a5,%hi(_heap_end)
+  47 0036 93870700 		addi	a5,a5,%lo(_heap_end)
+  48 003a 63F4E700 		bleu	a4,a5,.L3
+  49              	.L2:
+  12:../Firmware/RISCV/stubs/sbrk.c ****     return NULL - 1;
+  50              		.loc 1 12 17
+  51 003e FD57     		li	a5,-1
+  52 0040 2DA0     		j	.L4
+  53              	.L3:
+  13:../Firmware/RISCV/stubs/sbrk.c **** 
+  14:../Firmware/RISCV/stubs/sbrk.c ****   curbrk += incr;
+  54              		.loc 1 14 10
+  55 0042 B7070000 		lui	a5,%hi(curbrk.0)
+  56 0046 03A70700 		lw	a4,%lo(curbrk.0)(a5)
+  57 004a 8327C4FE 		lw	a5,-20(s0)
+  58 004e 3E97     		add	a4,a4,a5
+  59 0050 B7070000 		lui	a5,%hi(curbrk.0)
+  60 0054 23A0E700 		sw	a4,%lo(curbrk.0)(a5)
+  15:../Firmware/RISCV/stubs/sbrk.c ****   return curbrk - incr;
+  61              		.loc 1 15 17
+  62 0058 B7070000 		lui	a5,%hi(curbrk.0)
+  63 005c 03A70700 		lw	a4,%lo(curbrk.0)(a5)
+  64 0060 8327C4FE 		lw	a5,-20(s0)
+  65 0064 B307F040 		neg	a5,a5
+  66 0068 BA97     		add	a5,a4,a5
+  67              	.L4:
+  16:../Firmware/RISCV/stubs/sbrk.c **** }...
+  68              		.loc 1 16 1
+  69 006a 3E85     		mv	a0,a5
+  70 006c 7244     		lw	s0,28(sp)
+  71              		.cfi_restore 8
+  72              		.cfi_def_cfa 2, 32
+  73 006e 0561     		addi	sp,sp,32
+  74              		.cfi_def_cfa_offset 0
+  75 0070 8280     		jr	ra
+  76              		.cfi_endproc
+  77              	.LFE0:
+  79              		.text
+  80              	.Letext0:
+  81              		.file 2 "e:\\gd32\\gd32embeddedbuilder_v1.5.2.30854\\tools\\nuclei_riscv_newlibc_prebuilt_win32_20
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 sbrk.c
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:13     .sdata.curbrk.0:0000000000000000 curbrk.0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:19     .text._sbrk:0000000000000000 _sbrk
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:23     .text._sbrk:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:24     .text._sbrk:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:25     .text._sbrk:0000000000000002 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:27     .text._sbrk:0000000000000004 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:29     .text._sbrk:0000000000000006 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:32     .text._sbrk:000000000000000a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:37     .text._sbrk:0000000000000018 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:41     .text._sbrk:0000000000000024 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:46     .text._sbrk:0000000000000032 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:51     .text._sbrk:000000000000003e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:55     .text._sbrk:0000000000000042 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:62     .text._sbrk:0000000000000058 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:69     .text._sbrk:000000000000006a .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:71     .text._sbrk:000000000000006e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:72     .text._sbrk:000000000000006e .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:74     .text._sbrk:0000000000000070 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:76     .text._sbrk:0000000000000072 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:79     .text._sbrk:0000000000000072 .L0 
+                     .debug_frame:0000000000000000 .L0 
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:49     .text._sbrk:000000000000003e .L2
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:53     .text._sbrk:0000000000000042 .L3
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:67     .text._sbrk:000000000000006a .L4
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:176    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:379    .debug_str:0000000000000041 .LASF6
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:373    .debug_str:0000000000000018 .LASF7
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:391    .debug_str:0000000000000142 .LASF8
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:359    .debug_ranges:0000000000000000 .Ldebug_ranges0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:365    .debug_line:0000000000000000 .Ldebug_line0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:387    .debug_str:0000000000000131 .LASF9
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:367    .debug_str:0000000000000000 .LASF0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:383    .debug_str:0000000000000119 .LASF1
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:381    .debug_str:000000000000010d .LASF2
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:369    .debug_str:000000000000000d .LASF10
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:20     .text._sbrk:0000000000000000 .LFB0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:77     .text._sbrk:0000000000000072 .LFE0
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:371    .debug_str:0000000000000013 .LASF11
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:375    .debug_str:0000000000000037 .LASF3
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:385    .debug_str:0000000000000127 .LASF4
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:389    .debug_str:000000000000013b .LASF12
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:377    .debug_str:000000000000003c .LASF5
+C:\Users\CYMR90~1\AppData\Local\Temp\ccYwoDZS.s:83     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_end
+_heap_end
